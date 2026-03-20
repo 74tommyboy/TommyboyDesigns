@@ -188,26 +188,24 @@ export default function ProductDetail({ product }: Props) {
           </div>
         )}
 
-        {/* Custom artwork upload */}
-        {isCustom && (
-          <div className="tactical-divider pt-6">
-            <ArtworkUpload onUpload={setArtworkUrl} />
-          </div>
-        )}
-
         {/* Customer note */}
         <div className="space-y-2">
           <label htmlFor="customer-note" className="block text-sm font-medium text-steel-light">
-            {isCustom ? 'Additional Instructions' : 'Order Note'} <span className="text-steel/40">(optional)</span>
+            Order Note <span className="text-steel/40">(optional)</span>
           </label>
           <textarea
             id="customer-note"
             value={note}
             onChange={(e) => setNote(e.target.value)}
             rows={3}
-            placeholder={isCustom ? 'Color preferences, text to include, special requests…' : 'Any special notes for your order…'}
+            placeholder="Color preferences, text to include, special requests…"
             className="w-full bg-navy-700/50 border border-steel/20 rounded-lg px-4 py-3 text-sm text-white placeholder-steel/40 focus:outline-none focus:border-amber-bourbon/60 resize-none transition-colors"
           />
+        </div>
+
+        {/* Artwork upload — available on all products */}
+        <div className="tactical-divider pt-6">
+          <ArtworkUpload onUpload={setArtworkUrl} />
         </div>
 
         {/* Add to cart */}

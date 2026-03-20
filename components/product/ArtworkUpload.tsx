@@ -68,7 +68,7 @@ export default function ArtworkUpload({ onUpload }: Props) {
   return (
     <div className="space-y-3">
       <label className="block text-sm font-medium text-steel-light">
-        Upload Your Artwork <span className="text-amber-bourbon">*</span>
+        Upload Custom Artwork <span className="text-steel/40">(optional)</span>
       </label>
 
       {status === 'done' && previewUrl ? (

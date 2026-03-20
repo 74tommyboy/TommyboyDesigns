@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowRight, Shield, Star } from 'lucide-react'
 
 const STATS = [
@@ -69,48 +70,20 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Visual panel */}
+          {/* Hero image */}
           <div className="hidden lg:flex items-center justify-center animate-fade-in">
-            <div className="relative w-full max-w-md">
-              {/* Main card */}
-              <div className="glass-card p-8 relative overflow-hidden">
-                {/* Top accent */}
-                <div className="absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-amber-bourbon to-transparent" />
-
-                <div className="flex items-center justify-between mb-6">
-                  <span className="section-label text-xs">Featured Collection</span>
-                  <div className="flex gap-1">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className="w-3 h-3 fill-amber-bourbon text-amber-bourbon" />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Decorative product mockup */}
-                <div className="relative h-48 flex items-center justify-center">
-                  <div className="relative">
-                    {/* Bottle shape */}
-                    <div className="w-20 h-44 bg-gradient-to-b from-navy-700 to-navy-900 rounded-t-full border border-amber-bourbon/30 mx-auto relative">
-                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-6 h-10 bg-navy-700 border border-amber-bourbon/30 rounded-sm" />
-                      {/* Neck tag */}
-                      <div className="absolute top-6 left-1/2 -translate-x-1/2 w-14 h-8 bg-amber-bourbon/90 rounded-sm flex items-center justify-center shadow-amber-glow">
-                        <span className="font-display text-navy-900 text-xs tracking-wider">BTAC</span>
-                      </div>
-                    </div>
-                    {/* Glow */}
-                    <div className="absolute inset-0 bg-amber-glow pointer-events-none" />
-                  </div>
-                </div>
-
-                <div className="mt-6 flex items-center justify-between">
-                  <div>
-                    <div className="font-display text-white tracking-wider">BTAC Series</div>
-                    <div className="text-steel text-sm">Buffalo Trace Antique Collection</div>
-                  </div>
-                  <Link href="/collections/buffalo-trace-antique-collection-btac" className="btn-primary text-xs px-4 py-2">
-                    View
-                  </Link>
-                </div>
+            <div className="relative w-full max-w-lg">
+              <div className="relative rounded-lg overflow-hidden shadow-glass">
+                <div className="absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-amber-bourbon to-transparent z-10" />
+                <Image
+                  src="/hero.png"
+                  alt="Bourbon bottles with custom neck tags"
+                  width={640}
+                  height={420}
+                  className="w-full object-cover"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-navy-950/60 to-transparent" />
               </div>
 
               {/* Floating accent cards */}
@@ -123,7 +96,7 @@ export default function Hero() {
 
               <div className="absolute -bottom-4 -left-4 glass-card px-3 py-2 border-amber-bourbon/40">
                 <div className="text-xs text-steel">Starting at</div>
-                <div className="font-display text-amber-bourbon text-lg tracking-wider">$12.99</div>
+                <div className="font-display text-amber-bourbon text-lg tracking-wider">$7.49</div>
               </div>
             </div>
           </div>

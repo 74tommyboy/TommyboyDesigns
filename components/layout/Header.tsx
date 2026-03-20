@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ShoppingCart, Menu, X, ChevronDown } from 'lucide-react'
 import { useCart } from './CartProvider'
 import CartDrawer from './CartDrawer'
+import Logo from '@/components/ui/Logo'
 import { cn } from '@/lib/utils'
 
 const NAV_LINKS = [
@@ -49,22 +50,7 @@ export default function Header() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="relative">
-                <div className="w-9 h-9 border-2 border-amber-bourbon rotate-45 group-hover:rotate-[135deg] transition-transform duration-500" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="font-display text-amber-bourbon text-xs tracking-wider">TBD</span>
-                </div>
-              </div>
-              <div>
-                <div className="font-display text-white text-xl tracking-[0.12em] leading-none">
-                  TOMMYBOY
-                </div>
-                <div className="font-display text-amber-bourbon text-[10px] tracking-[0.4em] leading-none">
-                  DESIGNS
-                </div>
-              </div>
-            </Link>
+            <Logo />
 
             {/* Desktop Nav */}
             <nav className="hidden lg:flex items-center gap-8">

@@ -3,6 +3,11 @@ import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import { ShopifyCollection } from '@/lib/shopify'
 
+const LOCAL_BANNERS: Record<string, string> = {
+  'barware-accessories-1': '/banner-barware.png',
+  'sip-drip-collection-custom-neck-tags': '/banner-necktags.png',
+}
+
 interface Props {
   collections: ShopifyCollection[]
 }
@@ -21,7 +26,8 @@ export default function CollectionGrid({ collections }: Props) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {visible.map((collection) => {
-            const previewImage = collection.image ?? collection.products.edges[0]?.node.images.edges[0]?.node
+            const localBanner = LOCAL_BANNERS[collection.handle]
+            const previewImage = localBanner ? null : (collection.image ?? collection.products.edges[0]?.node.images.edges[0]?.node)
 
             return (
               <Link
@@ -30,7 +36,15 @@ export default function CollectionGrid({ collections }: Props) {
                 className="group relative glass-card overflow-hidden aspect-[3/4] hover:border-amber-bourbon/40 transition-all duration-300"
               >
                 {/* Background image */}
-                {previewImage ? (
+                {localBanner ? (
+                  <Image
+                    src={localBanner}
+                    alt={collection.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  />
+                ) : previewImage ? (
                   <Image
                     src={previewImage.url}
                     alt={previewImage.altText ?? collection.title}

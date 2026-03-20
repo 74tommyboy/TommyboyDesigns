@@ -39,7 +39,7 @@ export default function AddToCart({ product, selectedVariant, artworkUrl, custom
   }
 
   const unavailable = !selectedVariant || !selectedVariant.availableForSale
-  const requiresArtwork = isCustom && !artworkUrl
+  const requiresArtwork = false
 
   return (
     <div className="space-y-3">

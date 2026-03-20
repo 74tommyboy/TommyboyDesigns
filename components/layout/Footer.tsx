@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Logo from '@/components/ui/Logo'
 
 const COLLECTIONS = [
   { label: 'Neck Tags', href: '/collections/sip-drip-collection-custom-neck-tags' },
@@ -25,17 +26,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="md:col-span-2">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="relative w-9 h-9">
-                <div className="w-9 h-9 border-2 border-amber-bourbon rotate-45" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="font-display text-amber-bourbon text-xs tracking-wider">TBD</span>
-                </div>
-              </div>
-              <div>
-                <div className="font-display text-white text-xl tracking-[0.12em] leading-none">TOMMYBOY</div>
-                <div className="font-display text-amber-bourbon text-[10px] tracking-[0.4em] leading-none">DESIGNS</div>
-              </div>
+            <div className="mb-4">
+              <Logo />
             </div>
             <p className="text-steel text-sm leading-relaxed max-w-xs">
               Precision-crafted 3D-printed bourbon bottle neck tags for the serious collector.

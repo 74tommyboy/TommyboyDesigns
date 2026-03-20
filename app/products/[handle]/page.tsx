@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { ChevronRight } from 'lucide-react'
 import { getProduct, getProducts, formatMoney } from '@/lib/shopify'
 import ProductDetail from '@/components/product/ProductDetail'
+import JudgeMeReviews from '@/components/product/JudgeMeReviews'
 
 interface Props {
   params: { handle: string }
@@ -61,6 +62,9 @@ export default async function ProductPage({ params }: Props) {
 
         {/* Product */}
         <ProductDetail product={product} />
+
+        {/* Reviews */}
+        <JudgeMeReviews productId={product.id} productHandle={product.handle} />
 
         {/* Related products */}
         {related.length > 0 && (
