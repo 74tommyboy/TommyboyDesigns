@@ -14,7 +14,7 @@ interface Props {
 
 export default function CollectionGrid({ collections }: Props) {
   // Filter out any empty/unnamed collections
-  const visible = collections.filter((c) => c.title && c.handle)
+  const visible = collections.filter((c) => c.title && c.handle && c.handle !== 'frontpage')
 
   return (
     <section className="py-24 bg-navy-950">
