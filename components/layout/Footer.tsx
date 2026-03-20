@@ -63,6 +63,7 @@ export default function Footer() {
                 { label: 'About', href: '/#about' },
                 { label: 'Custom Orders', href: '/collections/sip-drip-collection-custom-neck-tags' },
                 { label: 'Shop All', href: '/shop' },
+                { label: 'Return Policy', href: '/policies/returns' },
               ].map((link) => (
                 <li key={link.href}>
                   <Link
