@@ -52,9 +52,7 @@ export default async function ProductPage({ params }: Props) {
       url: `https://www.tommyboydesigns.com/products/${product.handle}`,
       priceCurrency: minPrice.currencyCode,
       price: minPrice.amount,
-      availability: product.availableForSale
-        ? 'https://schema.org/InStock'
-        : 'https://schema.org/OutOfStock',
+      availability: 'https://schema.org/InStock',
       seller: { '@type': 'Organization', name: 'TommyboyDesigns' },
     },
   }
