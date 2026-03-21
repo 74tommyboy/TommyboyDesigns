@@ -2,8 +2,8 @@ import Link from 'next/link'
 import { Shield, RefreshCw, Package, Mail } from 'lucide-react'
 
 export const metadata = {
-  title: 'Return & Replacement Policy | TommyboyDesigns',
-  description: 'Our hassle-free replacement guarantee. No returns needed — we make it right.',
+  title: 'Return, Replacement & Refund Policy | TommyboyDesigns',
+  description: 'Our hassle-free replacement and refund policy. No returns needed — we make it right.',
 }
 
 export default function ReturnPolicyPage() {
@@ -20,8 +20,8 @@ export default function ReturnPolicyPage() {
             </span>
           </div>
           <h1 className="font-display text-white text-[clamp(2.5rem,6vw,4rem)] tracking-wider leading-none mb-4">
-            RETURN &amp; REPLACEMENT<br />
-            <span className="text-amber-bourbon">POLICY</span>
+            RETURN, REPLACEMENT<br />
+            <span className="text-amber-bourbon">&amp; REFUND POLICY</span>
           </h1>
           <p className="text-steel text-base leading-relaxed max-w-xl mx-auto">
             We stand behind every tag we ship. If something goes wrong, we make it right — no hassle, no questions.
@@ -52,9 +52,9 @@ export default function ReturnPolicyPage() {
                 <Package className="w-5 h-5 text-amber-bourbon" />
               </div>
               <div>
-                <h2 className="font-display text-white tracking-wider text-lg mb-2">FREE REPLACEMENT GUARANTEE</h2>
+                <h2 className="font-display text-white tracking-wider text-lg mb-2">FREE REPLACEMENT &amp; REFUND GUARANTEE</h2>
                 <p className="text-steel text-sm leading-relaxed mb-3">
-                  We do offer a <span className="text-white font-medium">free replacement</span> in either of the following situations:
+                  We offer a <span className="text-white font-medium">free replacement or full refund</span> — at our discretion — in either of the following situations:
                 </p>
                 <ul className="space-y-2">
                   {[
