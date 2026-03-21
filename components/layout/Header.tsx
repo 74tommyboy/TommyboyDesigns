@@ -21,6 +21,7 @@ const NAV_LINKS = [
   },
   { label: 'Custom', href: '/collections/sip-drip-collection-custom-neck-tags' },
   { label: 'About', href: '/#about' },
+  { label: 'Contact', href: '/contact' },
 ]
 
 export default function Header() {
