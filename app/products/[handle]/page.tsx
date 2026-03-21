@@ -38,7 +38,7 @@ export default async function ProductPage({ params }: Props) {
   const collectionHandle = product.collections.edges[0]?.node.handle
   const collectionTitle = product.collections.edges[0]?.node.title
   const productImage = product.images.edges[0]?.node.url
-  const price = product.priceRange.minVariantPrice
+  const minPrice = product.priceRange.minVariantPrice
 
   const productSchema = {
     '@context': 'https://schema.org',
@@ -50,8 +50,8 @@ export default async function ProductPage({ params }: Props) {
     offers: {
       '@type': 'Offer',
       url: `https://www.tommyboydesigns.com/products/${product.handle}`,
-      priceCurrency: price.currencyCode,
-      price: price.amount,
+      priceCurrency: minPrice.currencyCode,
+      price: minPrice.amount,
       availability: product.availableForSale
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
