@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Star, Shield, CheckCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import Logo from '@/components/ui/Logo'
 
-export default function ReviewPage({ params }: { params: { token: string } }) {
+function ReviewForm({ params }: { params: { token: string } }) {
   const searchParams = useSearchParams()
   const orderId = searchParams.get('order') ?? ''
   const email = searchParams.get('email') ?? ''
@@ -167,5 +167,17 @@ export default function ReviewPage({ params }: { params: { token: string } }) {
 
       </div>
     </main>
+  )
+}
+
+export default function ReviewPage({ params }: { params: { token: string } }) {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-navy-950 flex items-center justify-center">
+        <div className="text-amber-bourbon font-display tracking-widest text-sm uppercase animate-pulse">Loading...</div>
+      </main>
+    }>
+      <ReviewForm params={params} />
+    </Suspense>
   )
 }
