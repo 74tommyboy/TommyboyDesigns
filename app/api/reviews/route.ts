@@ -1,12 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createHmac } from 'crypto'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
+
+export const dynamic = 'force-dynamic'
+
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+}
 
 // GET /api/reviews?product_handle=xxx
 export async function GET(req: NextRequest) {
   const handle = req.nextUrl.searchParams.get('product_handle')
   if (!handle) return NextResponse.json({ error: 'Missing product_handle' }, { status: 400 })
 
+  const supabase = getSupabase()
   const { data, error } = await supabase
     .from('reviews')
     .select('*')
@@ -36,6 +46,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid review token' }, { status: 403 })
   }
 
+  const supabase = getSupabase()
   // Check if this order already submitted a review for this product
   const { data: existing } = await supabase
     .from('reviews')
