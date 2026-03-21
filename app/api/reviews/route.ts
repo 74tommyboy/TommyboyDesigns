@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createHmac } from 'crypto'
 import { supabase } from '@/lib/supabase'
 
 // GET /api/reviews?product_handle=xxx
@@ -27,8 +28,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Verify token
-  const crypto = await import('crypto')
-  const expectedToken = crypto.createHmac('sha256', process.env.REVIEW_TOKEN_SECRET!)
+  const expectedToken = createHmac('sha256', process.env.REVIEW_TOKEN_SECRET!)
     .update(`${order_id}:${email}`)
     .digest('hex')
 
