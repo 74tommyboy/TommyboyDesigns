@@ -4,7 +4,15 @@ import Image from 'next/image'
 import { ChevronRight } from 'lucide-react'
 import { getProducts, formatMoney } from '@/lib/shopify'
 
-export const metadata: Metadata = { title: 'Shop All Tags' }
+export const metadata: Metadata = {
+  title: 'Shop Bourbon Neck Tags | BTAC, Pappy Van Winkle & Custom Designs',
+  description: 'Browse all 3D-printed bourbon bottle neck tags. BTAC collection, Pappy Van Winkle series, custom orders, and barware accessories. Starting at $7.49. Veteran-owned.',
+  openGraph: {
+    title: 'Shop Bourbon Collector Neck Tags | TommyboyDesigns',
+    description: 'All 3D-printed bourbon bottle neck tags — BTAC, Pappy Van Winkle, custom designs and barware.',
+    images: [{ url: '/hero.png', width: 640, height: 420, alt: 'TommyboyDesigns bourbon neck tags collection' }],
+  },
+}
 export const dynamic = 'force-dynamic'
 
 export default async function ShopPage() {
