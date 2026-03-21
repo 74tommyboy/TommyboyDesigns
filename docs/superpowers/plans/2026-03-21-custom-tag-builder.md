@@ -156,7 +156,8 @@ export interface TagDetails {
   year: string
   batchType: 'batch' | 'store_pick'
   batchValue: string
-  additionalLines: string[]   // up to 3
+  additionalLines: string[]             // up to 3
+  attachment: 'hemp_twine' | 'bead_chain'  // how the tag hangs on the bottle; material is NOT a choice
 }
 
 export interface UploadedFile {
@@ -204,6 +205,7 @@ export const INITIAL_WIZARD_STATE: WizardState = {
     batchType: 'batch',
     batchValue: '',
     additionalLines: [],
+    attachment: 'hemp_twine',  // default to hemp twine
   },
   uploads: [],
   order: {
@@ -845,6 +847,28 @@ export default function DetailsStep({ details, onChange }: DetailsStepProps) {
             Add a text line
           </button>
         )}
+
+        {/* Attachment — hemp twine or bead chain; material is NOT a choice */}
+        <div>
+          <label className={labelCls}>Attachment <span className="text-amber-bourbon">*</span></label>
+          <div className="flex gap-4 mt-1">
+            {(['hemp_twine', 'bead_chain'] as const).map((type) => (
+              <label key={type} className="flex items-center gap-2 cursor-pointer glass-card px-4 py-3 flex-1 justify-center">
+                <input
+                  type="radio"
+                  name="attachment"
+                  value={type}
+                  checked={details.attachment === type}
+                  onChange={() => set({ attachment: type })}
+                  className="accent-amber-bourbon"
+                />
+                <span className="text-sm text-steel-light">
+                  {type === 'hemp_twine' ? 'Hemp Twine' : 'Bead Chain'}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -1427,6 +1451,7 @@ function buildEmailHtml(
             ${details?.year ? `<tr><td style="color:#9CA3AF;font-size:12px;text-transform:uppercase;letter-spacing:2px;padding-bottom:8px;">Year</td><td style="color:#D1D5DB;font-size:14px;padding-bottom:8px;">${details.year}</td></tr>` : ''}
             ${details?.batchValue ? `<tr><td style="color:#9CA3AF;font-size:12px;text-transform:uppercase;letter-spacing:2px;padding-bottom:8px;">${details.batchType === 'store_pick' ? 'Store Pick' : 'Batch'}</td><td style="color:#D1D5DB;font-size:14px;padding-bottom:8px;">${details.batchValue}</td></tr>` : ''}
             ${additionalLines.length > 0 ? `<tr><td style="color:#9CA3AF;font-size:12px;text-transform:uppercase;letter-spacing:2px;padding-bottom:8px;">Extra Text</td><td style="color:#D1D5DB;font-size:14px;padding-bottom:8px;">${additionalLines.join('<br>')}</td></tr>` : ''}
+            <tr><td style="color:#9CA3AF;font-size:12px;text-transform:uppercase;letter-spacing:2px;padding-bottom:8px;">Attachment</td><td style="color:#D1D5DB;font-size:14px;padding-bottom:8px;">${details?.attachment === 'bead_chain' ? 'Bead Chain' : 'Hemp Twine'}</td></tr>
             <tr>
               <td style="color:#9CA3AF;font-size:12px;text-transform:uppercase;letter-spacing:2px;padding-bottom:8px;">Quantity</td>
               <td style="color:#D1D5DB;font-size:14px;padding-bottom:8px;">${order.quantity}</td>

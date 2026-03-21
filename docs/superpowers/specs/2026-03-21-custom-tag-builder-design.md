@@ -68,6 +68,9 @@ Up to 4 color slots. Slot 1 always visible; slots 2–4 unlock progressively as 
 | Year | Text input | No |
 | Batch / Store Pick | Toggle + text input | No |
 | Additional text lines | Up to 3 repeatable text inputs | No |
+| Attachment | Radio toggle: Hemp Twine / Bead Chain | Yes |
+
+**Note:** All tags are made from the same material — material is NOT a customer choice. Attachment method (how the tag hangs on the bottle) is the only physical variant: **Hemp Twine** or **Bead Chain**.
 
 ### Step 4 — Reference Uploads
 
@@ -120,7 +123,7 @@ Receives the complete wizard state. Validates required fields (shape, quantity, 
   status: text ('new' | 'in_progress' | 'quoted' | 'completed') default 'new',
   shape: text,  // 'square' | 'circle' | 'rounded_square' | 'shield' | 'rounded_rectangle' | 'oblong'
   colors: jsonb,  // Array<{ slot: number; hex: string; label: string }>
-  details: jsonb, // { distillery, year, batch, additional_text: string[] }
+  details: jsonb, // { distillery, year, batch, additional_text: string[], attachment: 'hemp_twine' | 'bead_chain' }
   uploads: text[], // Supabase Storage paths (e.g. 'custom-inquiry-uploads/abc123/logo.pdf')
   quantity: integer,
   contact: jsonb, // { name, email, phone? }
