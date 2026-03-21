@@ -39,6 +39,7 @@ export default async function ProductPage({ params }: Props) {
   const collectionTitle = product.collections.edges[0]?.node.title
   const productImage = product.images.edges[0]?.node.url
   const minPrice = product.priceRange.minVariantPrice
+  const isAvailable = product.variants.edges.some(e => e.node.availableForSale)
 
   const productSchema = {
     '@context': 'https://schema.org',
@@ -52,8 +53,43 @@ export default async function ProductPage({ params }: Props) {
       url: `https://www.tommyboydesigns.com/products/${product.handle}`,
       priceCurrency: minPrice.currencyCode,
       price: minPrice.amount,
-      availability: 'https://schema.org/InStock',
+      priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      availability: isAvailable ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       seller: { '@type': 'Organization', name: 'TommyboyDesigns' },
+      shippingDetails: {
+        '@type': 'OfferShippingDetails',
+        shippingRate: {
+          '@type': 'MonetaryAmount',
+          currency: 'USD',
+        },
+        shippingDestination: {
+          '@type': 'DefinedRegion',
+          addressCountry: 'US',
+        },
+        deliveryTime: {
+          '@type': 'ShippingDeliveryTime',
+          handlingTime: {
+            '@type': 'QuantitativeValue',
+            minValue: 3,
+            maxValue: 5,
+            unitCode: 'DAY',
+          },
+          transitTime: {
+            '@type': 'QuantitativeValue',
+            minValue: 1,
+            maxValue: 7,
+            unitCode: 'DAY',
+          },
+        },
+      },
+      hasMerchantReturnPolicy: {
+        '@type': 'MerchantReturnPolicy',
+        applicableCountry: 'US',
+        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+        merchantReturnDays: 30,
+        returnMethod: 'https://schema.org/ReturnByMail',
+        returnFees: 'https://schema.org/FreeReturn',
+      },
     },
   }
 

@@ -45,7 +45,7 @@ export default function ShippingPolicyPage() {
             SHIPPING <span className="text-amber-bourbon">POLICY</span>
           </h1>
           <p className="text-steel text-base leading-relaxed max-w-xl mx-auto">
-            Every tag is carefully packed and shipped from Ambridge, PA. Here's what to expect after you place your order.
+            Most orders are carefully packed and shipped from Ambridge, PA. Select partner products may ship directly from our trusted suppliers. Here's what to expect after you place your order.
           </p>
         </div>
 
@@ -137,6 +137,24 @@ export default function ShippingPolicyPage() {
               </p>
               <p className="text-steel/60 text-xs mt-3">
                 If your tracking number shows no movement after 5 business days, please contact us and we will look into it.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Partner products note */}
+        <div className="glass-card p-6 border-amber-bourbon/20 mb-12">
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-amber-bourbon/10 border border-amber-bourbon/30 flex items-center justify-center">
+              <Package className="w-5 h-5 text-amber-bourbon" />
+            </div>
+            <div>
+              <h2 className="font-display text-white tracking-wider text-lg mb-2">PARTNER &amp; MARKETPLACE PRODUCTS</h2>
+              <p className="text-steel text-sm leading-relaxed">
+                Some products in our store are sourced from trusted partner brands through the Shopify Collective network.
+                These items ship directly from the supplier and may have different processing times, carriers, or delivery windows
+                than TommyboyDesigns-made products. Shipping details for partner products will be displayed on the product page
+                and confirmed at checkout.
               </p>
             </div>
           </div>

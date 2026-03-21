@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Shield, RefreshCw, Package, Mail } from 'lucide-react'
+import { Shield, RefreshCw, Package, Mail, Users } from 'lucide-react'
 
 export const metadata = {
   title: 'Return, Replacement & Refund Policy | TommyboyDesigns',
@@ -97,6 +97,27 @@ export default function ReturnPolicyPage() {
                     </li>
                   ))}
                 </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="glass-card p-6 border-amber-bourbon/20">
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-amber-bourbon/10 border border-amber-bourbon/30 flex items-center justify-center">
+                <Users className="w-5 h-5 text-amber-bourbon" />
+              </div>
+              <div>
+                <h2 className="font-display text-white tracking-wider text-lg mb-2">PARTNER &amp; MARKETPLACE PRODUCTS</h2>
+                <p className="text-steel text-sm leading-relaxed">
+                  Some products in our store are sourced from trusted partner brands through the Shopify Collective network
+                  and fulfilled directly by those suppliers. Return and refund eligibility for partner products is governed
+                  by the individual supplier's policy, which will be displayed on the product page. If you have an issue
+                  with a partner product, please{' '}
+                  <Link href="/contact" className="text-amber-bourbon hover:text-amber-light transition-colors">
+                    contact us
+                  </Link>
+                  {' '}and we will help facilitate a resolution.
+                </p>
               </div>
             </div>
           </div>

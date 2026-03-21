@@ -88,6 +88,9 @@ export default function Logo({ linkWrapper = true }: Props) {
         <div className="font-display text-amber-bourbon text-[10px] tracking-[0.4em] leading-none group-hover:text-amber-light transition-colors duration-300">
           DESIGNS
         </div>
+        <div className="text-steel/50 text-[8px] tracking-[0.25em] leading-none mt-1 italic">
+          Raise the bar.
+        </div>
       </div>
     </div>
   )

@@ -44,6 +44,10 @@ export default function Hero() {
               <span className="block text-[clamp(3rem,8vw,6rem)] tracking-wider">NECK TAGS</span>
             </h1>
 
+            <p className="font-display text-amber-bourbon/60 text-sm tracking-[0.3em] uppercase italic mb-4">
+              Raise the bar.
+            </p>
+
             <p className="text-steel-light text-lg leading-relaxed mb-10 max-w-lg">
               Precision-crafted 3D-printed bottle neck tags for the serious bourbon collector.
               BTAC, Pappy Van Winkle, and fully custom designs.
