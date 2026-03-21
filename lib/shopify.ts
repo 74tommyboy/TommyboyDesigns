@@ -101,7 +101,7 @@ const PRODUCT_FRAGMENT = `
   images(first: 10) {
     edges { node { url altText } }
   }
-  variants(first: 20) {
+  variants(first: 250) {
     edges {
       node {
         id title availableForSale
