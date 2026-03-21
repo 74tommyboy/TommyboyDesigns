@@ -68,9 +68,8 @@ Up to 4 color slots. Slot 1 always visible; slots 2–4 unlock progressively as 
 | Year | Text input | No |
 | Batch / Store Pick | Toggle + text input | No |
 | Additional text lines | Up to 3 repeatable text inputs | No |
-| Attachment | Radio toggle: Hemp Twine / Bead Chain | Yes |
 
-**Note:** All tags are made from the same material — material is NOT a customer choice. Attachment method (how the tag hangs on the bottle) is the only physical variant: **Hemp Twine** or **Bead Chain**.
+**Note:** All tags are made from the same material — material is NOT a customer choice.
 
 ### Step 4 — Reference Uploads
 
@@ -86,11 +85,14 @@ Up to 4 color slots. Slot 1 always visible; slots 2–4 unlock progressively as 
 
 | Field | Type | Required |
 |---|---|---|
+| Attachment | Radio toggle: Hemp Twine / Bead Chain | Yes |
 | Quantity | Number input (min 1) | Yes |
 | Name | Text input | Yes |
 | Email | Email input | Yes |
 | Phone | Tel input | No |
 | Additional Notes | Textarea | No |
+
+Attachment is presented first as a simple two-option toggle — it's the last meaningful choice before submitting.
 
 Submit button shows spinner during API call. On success → redirect to `/custom/build/confirmation?shape=<shape>&qty=<quantity>&distillery=<distillery>` (key summary fields passed as query params so the confirmation page can display them without client state).
 

@@ -156,8 +156,7 @@ export interface TagDetails {
   year: string
   batchType: 'batch' | 'store_pick'
   batchValue: string
-  additionalLines: string[]             // up to 3
-  attachment: 'hemp_twine' | 'bead_chain'  // how the tag hangs on the bottle; material is NOT a choice
+  additionalLines: string[]   // up to 3
 }
 
 export interface UploadedFile {
@@ -166,6 +165,7 @@ export interface UploadedFile {
 }
 
 export interface OrderInfo {
+  attachment: 'hemp_twine' | 'bead_chain'  // last choice before submit; material is NOT a customer option
   quantity: number
   name: string
   email: string
@@ -205,10 +205,10 @@ export const INITIAL_WIZARD_STATE: WizardState = {
     batchType: 'batch',
     batchValue: '',
     additionalLines: [],
-    attachment: 'hemp_twine',  // default to hemp twine
   },
   uploads: [],
   order: {
+    attachment: 'hemp_twine',  // default; presented as first field in Step 5
     quantity: 1,
     name: '',
     email: '',
@@ -848,27 +848,6 @@ export default function DetailsStep({ details, onChange }: DetailsStepProps) {
           </button>
         )}
 
-        {/* Attachment — hemp twine or bead chain; material is NOT a choice */}
-        <div>
-          <label className={labelCls}>Attachment <span className="text-amber-bourbon">*</span></label>
-          <div className="flex gap-4 mt-1">
-            {(['hemp_twine', 'bead_chain'] as const).map((type) => (
-              <label key={type} className="flex items-center gap-2 cursor-pointer glass-card px-4 py-3 flex-1 justify-center">
-                <input
-                  type="radio"
-                  name="attachment"
-                  value={type}
-                  checked={details.attachment === type}
-                  onChange={() => set({ attachment: type })}
-                  className="accent-amber-bourbon"
-                />
-                <span className="text-sm text-steel-light">
-                  {type === 'hemp_twine' ? 'Hemp Twine' : 'Bead Chain'}
-                </span>
-              </label>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   )
@@ -1026,6 +1005,28 @@ export default function OrderStep({ order, onChange }: OrderStepProps) {
       <p className="text-steel/60 text-sm mb-6">Almost done — let us know how many tags you need and how to reach you.</p>
 
       <div className="space-y-4">
+        {/* Attachment — simple last choice before submit; material is NOT a customer option */}
+        <div>
+          <label className={labelCls}>Attachment <span className="text-amber-bourbon">*</span></label>
+          <div className="flex gap-4 mt-1">
+            {(['hemp_twine', 'bead_chain'] as const).map((type) => (
+              <label key={type} className="flex items-center gap-2 cursor-pointer glass-card px-4 py-3 flex-1 justify-center">
+                <input
+                  type="radio"
+                  name="attachment"
+                  value={type}
+                  checked={order.attachment === type}
+                  onChange={() => set({ attachment: type })}
+                  className="accent-amber-bourbon"
+                />
+                <span className="text-sm text-steel-light">
+                  {type === 'hemp_twine' ? 'Hemp Twine' : 'Bead Chain'}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
+
         <div>
           <label className={labelCls}>Quantity <span className="text-amber-bourbon">*</span></label>
           <input
