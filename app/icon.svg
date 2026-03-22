@@ -1,22 +1,22 @@
 <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" width="1000" height="1000">
   <!-- Background -->
-  <rect width="100" height="100" fill="#0A0F1E"/>
+  <rect width="100" height="100" fill="#D97706"/>
 
   <!-- Dog tag cord -->
-  <line x1="50" y1="5" x2="50" y2="22" stroke="#D97706" stroke-width="2" stroke-linecap="round"/>
+  <line x1="50" y1="5" x2="50" y2="22" stroke="#0A0F1E" stroke-width="2" stroke-linecap="round"/>
 
   <!-- Chain loop -->
-  <circle cx="50" cy="27" r="5" stroke="#D97706" stroke-width="2"/>
+  <circle cx="50" cy="27" r="5" stroke="#0A0F1E" stroke-width="2"/>
 
   <!-- Dog tag body -->
-  <rect x="26" y="33" width="48" height="62" rx="10" stroke="#D97706" stroke-width="2"/>
+  <rect x="26" y="33" width="48" height="62" rx="10" stroke="#0A0F1E" stroke-width="2"/>
 
   <!-- Engraved line above text -->
-  <line x1="35" y1="54" x2="65" y2="54" stroke="#D97706" stroke-width="1" stroke-opacity="0.4"/>
+  <line x1="35" y1="54" x2="65" y2="54" stroke="#0A0F1E" stroke-width="1" stroke-opacity="0.4"/>
 
   <!-- TBD text -->
-  <text x="50" y="70" text-anchor="middle" fill="#D97706" font-size="19" font-family="Impact, sans-serif" letter-spacing="3">TBD</text>
+  <text x="50" y="70" text-anchor="middle" fill="#0A0F1E" font-size="19" font-family="Impact, sans-serif" letter-spacing="3">TBD</text>
 
   <!-- Engraved line below text -->
-  <line x1="35" y1="78" x2="65" y2="78" stroke="#D97706" stroke-width="1" stroke-opacity="0.4"/>
+  <line x1="35" y1="78" x2="65" y2="78" stroke="#0A0F1E" stroke-width="1" stroke-opacity="0.4"/>
 </svg>
