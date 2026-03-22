@@ -5,7 +5,7 @@ import CollectionGrid from '@/components/home/CollectionGrid'
 import AboutStrip from '@/components/home/AboutStrip'
 import ReviewTicker from '@/components/home/ReviewTicker'
 import { getProducts, getCollections } from '@/lib/shopify'
-import { Review } from '@/lib/supabase'
+import { supabase, Review } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,14 +26,13 @@ export const metadata: Metadata = {
 }
 
 async function getReviews(): Promise<Review[]> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
-    const res = await fetch(`${baseUrl}/api/reviews`, { cache: 'no-store' })
-    const data = await res.json()
-    return data.reviews ?? []
-  } catch {
-    return []
-  }
+  const { data } = await supabase
+    .from('reviews')
+    .select('*')
+    .eq('approved', true)
+    .order('created_at', { ascending: false })
+    .limit(20)
+  return data ?? []
 }
 
 export default async function HomePage() {
