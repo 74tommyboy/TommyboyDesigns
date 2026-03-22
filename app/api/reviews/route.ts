@@ -14,15 +14,20 @@ function getSupabase() {
 // GET /api/reviews?product_handle=xxx
 export async function GET(req: NextRequest) {
   const handle = req.nextUrl.searchParams.get('product_handle')
-  if (!handle) return NextResponse.json({ error: 'Missing product_handle' }, { status: 400 })
 
   const supabase = getSupabase()
-  const { data, error } = await supabase
+  let query = supabase
     .from('reviews')
     .select('*')
-    .eq('product_handle', handle)
     .eq('approved', true)
     .order('created_at', { ascending: false })
+    .limit(20)
+
+  if (handle) {
+    query = query.eq('product_handle', handle)
+  }
+
+  const { data, error } = await query
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ reviews: data })
