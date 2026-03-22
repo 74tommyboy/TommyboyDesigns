@@ -51,6 +51,7 @@ const config: Config = {
         'fade-in': 'fadeIn 0.4s ease-out forwards',
         'pulse-amber': 'pulseAmber 2s ease-in-out infinite',
         'march': 'march 20s linear infinite',
+        'slide-up': 'slideUp 0.4s ease-out forwards',
       },
       keyframes: {
         fadeUp: {
@@ -68,6 +69,10 @@ const config: Config = {
         march: {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },
+        },
+        slideUp: {
+          '0%': { opacity: '0', transform: 'translateY(16px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
       },
       boxShadow: {
