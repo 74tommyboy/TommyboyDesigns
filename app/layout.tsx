@@ -4,6 +4,7 @@ import './globals.css'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { CartProvider } from '@/components/layout/CartProvider'
+import ReviewPopup from '@/components/ui/ReviewPopup'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.tommyboydesigns.com'),
@@ -76,6 +77,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main className="min-h-dvh">{children}</main>
           <Footer />
+          <ReviewPopup />
         </CartProvider>
       </body>
     </html>
