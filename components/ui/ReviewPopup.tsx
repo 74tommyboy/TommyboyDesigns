@@ -22,7 +22,6 @@ export default function ReviewPopup() {
         const pick = reviews[Math.floor(Math.random() * reviews.length)]
         setReview(pick)
         const timer = setTimeout(() => setVisible(true), 3000)
-        return () => clearTimeout(timer)
       })
       .catch(() => {})
   }, [])
