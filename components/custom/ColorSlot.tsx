@@ -12,7 +12,23 @@ interface ColorSlotProps {
   removable: boolean
 }
 
+function colorNameToHex(name: string): string | null {
+  const s = new Option().style
+  s.color = name.trim()
+  if (!s.color) return null
+  const m = s.color.match(/\d+/g)
+  if (!m) return null
+  const [r, g, b] = m.map(Number)
+  return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('')
+}
+
 export default function ColorSlot({ slot, onHexChange, onNameChange, onLabelChange, onRemove, removable }: ColorSlotProps) {
+  const handleNameChange = (name: string) => {
+    onNameChange(name)
+    const hex = colorNameToHex(name)
+    if (hex) onHexChange(hex)
+  }
+
   return (
     <div className="glass-card p-4 flex flex-col gap-3">
       <div className="flex items-center justify-between">
@@ -32,7 +48,7 @@ export default function ColorSlot({ slot, onHexChange, onNameChange, onLabelChan
       <input
         type="text"
         value={slot.name}
-        onChange={(e) => onNameChange(e.target.value)}
+        onChange={(e) => handleNameChange(e.target.value)}
         placeholder="Color name (e.g. Black, Gold, Navy Blue)"
         className="w-full bg-navy-800/50 border border-white/10 rounded px-3 py-2 text-sm text-white placeholder:text-steel/40 focus:outline-none focus:border-amber-bourbon/50"
       />
