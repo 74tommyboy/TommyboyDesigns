@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { CheckCircle } from 'lucide-react'
 import { SHAPES } from '@/lib/custom-inquiry-types'
 
+export const dynamic = 'force-dynamic'
+
 interface Props {
   searchParams: Promise<{ shape?: string; qty?: string; distillery?: string }>
 }
