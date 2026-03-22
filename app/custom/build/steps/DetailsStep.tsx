@@ -36,11 +36,11 @@ export default function DetailsStep({ details, onChange, distilleries }: Details
   return (
     <div>
       <h2 className="font-display text-white text-xl tracking-wider mb-2">TAG DETAILS</h2>
-      <p className="text-steel/60 text-sm mb-6">Tell us what text goes on your tag. Only Distillery is required.</p>
+      <p className="text-steel/60 text-sm mb-6">Tell us what text goes on your tag. Only Distillery/Bottle is required.</p>
 
       <div className="space-y-4">
         <div>
-          <label className={labelCls}>Distillery <span className="text-amber-bourbon">*</span></label>
+          <label className={labelCls}>Distillery / Bottle <span className="text-amber-bourbon">*</span></label>
           <select
             value={isOther ? '__other__' : (details.distillery || '')}
             onChange={(e) => {
