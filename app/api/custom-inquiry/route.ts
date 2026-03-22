@@ -22,6 +22,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing required fields: shape, quantity, name, email' }, { status: 400 })
   }
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(order.email)) {
+    return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
+  }
+
   // Generate signed URLs for uploads (1-hour expiry — for email only)
   const signedUrls: string[] = []
   for (const upload of uploads ?? []) {
