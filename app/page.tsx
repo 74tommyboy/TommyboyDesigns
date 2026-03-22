@@ -3,7 +3,9 @@ import Hero from '@/components/home/Hero'
 import FeaturedProducts from '@/components/home/FeaturedProducts'
 import CollectionGrid from '@/components/home/CollectionGrid'
 import AboutStrip from '@/components/home/AboutStrip'
+import ReviewTicker from '@/components/home/ReviewTicker'
 import { getProducts, getCollections } from '@/lib/shopify'
+import { Review } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,10 +25,22 @@ export const metadata: Metadata = {
   },
 }
 
+async function getReviews(): Promise<Review[]> {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+    const res = await fetch(`${baseUrl}/api/reviews`, { cache: 'no-store' })
+    const data = await res.json()
+    return data.reviews ?? []
+  } catch {
+    return []
+  }
+}
+
 export default async function HomePage() {
-  const [products, collections] = await Promise.all([
+  const [products, collections, reviews] = await Promise.all([
     getProducts(8),
     getCollections(),
+    getReviews(),
   ])
 
   return (
@@ -35,6 +49,7 @@ export default async function HomePage() {
       <FeaturedProducts products={products} />
       <CollectionGrid collections={collections} />
       <AboutStrip />
+      <ReviewTicker reviews={reviews} />
     </>
   )
 }
