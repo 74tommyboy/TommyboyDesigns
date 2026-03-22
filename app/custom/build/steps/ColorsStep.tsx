@@ -44,9 +44,7 @@ export default function ColorsStep({ colors, onChange }: ColorsStepProps) {
           <ColorSlot
             key={slot.slot}
             slot={slot}
-            onHexChange={(hex) => updateColor(i, { hex })}
-            onNameChange={(name) => updateColor(i, { name })}
-            onLabelChange={(label) => updateColor(i, { label })}
+            onUpdate={(patch) => updateColor(i, patch)}
             onRemove={() => removeColor(i)}
             removable={colors.length > 1}
           />

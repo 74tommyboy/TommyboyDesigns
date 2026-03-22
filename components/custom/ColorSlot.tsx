@@ -5,9 +5,7 @@ import { ColorSlot as ColorSlotType } from '@/lib/custom-inquiry-types'
 
 interface ColorSlotProps {
   slot: ColorSlotType
-  onHexChange: (hex: string) => void
-  onNameChange: (name: string) => void
-  onLabelChange: (label: string) => void
+  onUpdate: (patch: Partial<ColorSlotType>) => void
   onRemove: () => void
   removable: boolean
 }
@@ -18,20 +16,20 @@ function colorNameToHex(name: string): string | null {
     canvas.width = canvas.height = 1
     const ctx = canvas.getContext('2d')
     if (!ctx) return null
-    ctx.fillStyle = '#123456' // sentinel
+    ctx.fillStyle = '#123456'
     ctx.fillStyle = name.trim()
-    if (ctx.fillStyle === '#123456') return null // unrecognized — fillStyle unchanged
-    return ctx.fillStyle  // browser returns lowercase hex, e.g. '#ffd700'
+    if (ctx.fillStyle === '#123456') return null
+    return ctx.fillStyle
   } catch {
     return null
   }
 }
 
-export default function ColorSlot({ slot, onHexChange, onNameChange, onLabelChange, onRemove, removable }: ColorSlotProps) {
+export default function ColorSlot({ slot, onUpdate, onRemove, removable }: ColorSlotProps) {
   const handleNameChange = (name: string) => {
-    onNameChange(name)
     const hex = colorNameToHex(name)
-    if (hex) onHexChange(hex)
+    // Single patch — name and hex arrive together, no stale-closure overwrite
+    onUpdate(hex ? { name, hex } : { name })
   }
 
   return (
@@ -61,7 +59,7 @@ export default function ColorSlot({ slot, onHexChange, onNameChange, onLabelChan
       <input
         type="text"
         value={slot.label}
-        onChange={(e) => onLabelChange(e.target.value)}
+        onChange={(e) => onUpdate({ label: e.target.value })}
         placeholder="Usage (e.g. Base, Trim, Text)"
         className="w-full bg-navy-800/50 border border-white/10 rounded px-3 py-2 text-sm text-white placeholder:text-steel/40 focus:outline-none focus:border-amber-bourbon/50"
       />
@@ -71,7 +69,7 @@ export default function ColorSlot({ slot, onHexChange, onNameChange, onLabelChan
           <input
             type="color"
             value={slot.hex}
-            onChange={(e) => onHexChange(e.target.value)}
+            onChange={(e) => onUpdate({ hex: e.target.value })}
             className="absolute inset-0 w-full h-full cursor-pointer opacity-0"
             aria-label={`Pick color ${slot.slot}`}
           />
