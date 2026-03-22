@@ -13,13 +13,18 @@ interface ColorSlotProps {
 }
 
 function colorNameToHex(name: string): string | null {
-  const s = new Option().style
-  s.color = name.trim()
-  if (!s.color) return null
-  const m = s.color.match(/\d+/g)
-  if (!m) return null
-  const [r, g, b] = m.map(Number)
-  return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('')
+  try {
+    const canvas = document.createElement('canvas')
+    canvas.width = canvas.height = 1
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return null
+    ctx.fillStyle = '#123456' // sentinel
+    ctx.fillStyle = name.trim()
+    if (ctx.fillStyle === '#123456') return null // unrecognized — fillStyle unchanged
+    return ctx.fillStyle  // browser returns lowercase hex, e.g. '#ffd700'
+  } catch {
+    return null
+  }
 }
 
 export default function ColorSlot({ slot, onHexChange, onNameChange, onLabelChange, onRemove, removable }: ColorSlotProps) {
