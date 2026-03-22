@@ -3,13 +3,14 @@ import { CheckCircle } from 'lucide-react'
 import { SHAPES } from '@/lib/custom-inquiry-types'
 
 interface Props {
-  searchParams: { shape?: string; qty?: string; distillery?: string }
+  searchParams: Promise<{ shape?: string; qty?: string; distillery?: string }>
 }
 
-export default function ConfirmationPage({ searchParams }: Props) {
-  const shapeData = SHAPES.find(s => s.id === searchParams.shape)
-  const qty = searchParams.qty ? parseInt(searchParams.qty) : null
-  const distillery = searchParams.distillery ?? ''
+export default async function ConfirmationPage({ searchParams }: Props) {
+  const params = await searchParams
+  const shapeData = SHAPES.find(s => s.id === params.shape)
+  const qty = params.qty ? parseInt(params.qty) : null
+  const distillery = params.distillery ?? ''
 
   return (
     <div className="pt-28 pb-24 min-h-dvh flex items-center">
