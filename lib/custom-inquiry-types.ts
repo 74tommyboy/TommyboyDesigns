@@ -4,7 +4,7 @@ export const SHAPES = [
   { id: 'rounded_square',     label: 'Rounded Square',    width: 50, height: 50, isCircle: false },
   { id: 'shield',             label: 'Shield',            width: 50, height: 50, isCircle: false },
   { id: 'rounded_rectangle',  label: 'Rounded Rectangle', width: 30, height: 60, isCircle: false },
-  { id: 'oblong',             label: 'Oblong',            width: 40, height: 62, isCircle: false },
+  { id: 'oblong',             label: 'Oval',              width: 40, height: 62, isCircle: false },
 ] as const
 
 export type ShapeId = typeof SHAPES[number]['id']

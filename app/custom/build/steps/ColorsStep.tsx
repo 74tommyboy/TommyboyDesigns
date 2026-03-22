@@ -36,7 +36,7 @@ export default function ColorsStep({ colors, onChange }: ColorsStepProps) {
   return (
     <div>
       <h2 className="font-display text-white text-xl tracking-wider mb-2">CHOOSE YOUR COLORS</h2>
-      <p className="text-steel/60 text-sm mb-6">Add up to 4 colors. Label each one to help us understand your vision.</p>
+      <p className="text-steel/60 text-sm mb-6">Add up to 4 colors. Type the color name (e.g. Black, Gold) and optionally pick an exact shade.</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         {colors.map((slot, i) => (

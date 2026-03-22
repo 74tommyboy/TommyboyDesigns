@@ -28,8 +28,16 @@ export default function ColorSlot({ slot, onHexChange, onLabelChange, onRemove, 
         )}
       </div>
 
+      <input
+        type="text"
+        value={slot.label}
+        onChange={(e) => onLabelChange(e.target.value)}
+        placeholder="e.g. Black, Gold, Navy Blue…"
+        className="w-full bg-navy-800/50 border border-white/10 rounded px-3 py-2 text-sm text-white placeholder:text-steel/40 focus:outline-none focus:border-amber-bourbon/50"
+      />
+
       <div className="flex items-center gap-3">
-        <div className="relative w-10 h-10 rounded overflow-hidden border border-white/10 flex-shrink-0">
+        <div className="relative w-8 h-8 rounded overflow-hidden border border-white/10 flex-shrink-0">
           <input
             type="color"
             value={slot.hex}
@@ -39,16 +47,8 @@ export default function ColorSlot({ slot, onHexChange, onLabelChange, onRemove, 
           />
           <div className="w-full h-full" style={{ backgroundColor: slot.hex }} />
         </div>
-        <span className="text-steel text-sm font-mono">{slot.hex}</span>
+        <span className="text-steel/50 text-xs">Optional: pick an exact shade</span>
       </div>
-
-      <input
-        type="text"
-        value={slot.label}
-        onChange={(e) => onLabelChange(e.target.value)}
-        placeholder="Label (e.g. background)"
-        className="w-full bg-navy-800/50 border border-white/10 rounded px-3 py-2 text-sm text-white placeholder:text-steel/40 focus:outline-none focus:border-amber-bourbon/50"
-      />
     </div>
   )
 }
