@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
       details: details ?? {},
       uploads: (uploads ?? []).map(u => u.path),
       quantity: order.quantity,
+      attachment: order.attachment,
       contact: { name: order.name, email: order.email, phone: order.phone },
       notes: order.notes ?? '',
     }),
