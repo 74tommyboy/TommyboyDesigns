@@ -19,7 +19,7 @@ const NAV_LINKS = [
       { label: 'Barware & Accessories', href: '/collections/barware-accessories-1' },
     ],
   },
-  { label: 'Custom', href: '/collections/sip-drip-collection-custom-neck-tags' },
+  { label: 'Custom', href: '/custom' },
   { label: 'About', href: '/#about' },
   { label: 'Contact', href: '/contact' },
 ]
