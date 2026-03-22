@@ -58,7 +58,7 @@ export default function Hero() {
                 Shop All Tags
                 <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link href="/collections/sip-drip-collection-custom-neck-tags" className="btn-outline">
+              <Link href="/custom" className="btn-outline">
                 Custom Order
               </Link>
             </div>

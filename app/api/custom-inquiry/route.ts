@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
   for (const upload of uploads ?? []) {
     const { data } = await supabaseAdmin.storage
       .from('custom-inquiry-uploads')
-      .createSignedUrl(upload.path, 3600)
+      .createSignedUrl(upload.path, 604800)
     if (data?.signedUrl) signedUrls.push(data.signedUrl)
   }
 
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
       notes: order.notes ?? '',
     }),
     resend.emails.send({
-      from: 'TommyboyDesigns <orders@tommyboydesigns.com>',
+      from: 'TommyboyDesigns <orders@contact.tommyboydesigns.com>',
       to: OWNER_EMAIL,
       subject: `New Custom Tag Inquiry — ${details?.distillery ?? 'Unknown'} (${order.name})`,
       html: buildEmailHtml(body, shapeData, signedUrls),
@@ -90,10 +90,18 @@ function buildEmailHtml(
     </span>`
   }).join('')
 
+  const imageExts = /\.(jpe?g|png|gif|webp|svg)$/i
   const fileLinks = signedUrls.length > 0
-    ? signedUrls.map((url, i) =>
-        `<li><a href="${url}" style="color:#D97706;">${(uploads ?? [])[i]?.name ?? `File ${i + 1}`}</a> (expires in 1 hour)</li>`
-      ).join('')
+    ? signedUrls.map((url, i) => {
+        const fileName = (uploads ?? [])[i]?.name ?? `File ${i + 1}`
+        const isImage = imageExts.test(fileName)
+        return isImage
+          ? `<li style="list-style:none;margin-bottom:16px;">
+               <img src="${url}" alt="${fileName}" style="max-width:100%;border-radius:6px;border:1px solid rgba(217,119,6,0.2);display:block;margin-bottom:6px;" />
+               <a href="${url}" style="color:#D97706;font-size:12px;">${fileName}</a>
+             </li>`
+          : `<li><a href="${url}" style="color:#D97706;">${fileName}</a></li>`
+      }).join('')
     : '<li style="color:#6B7280;">No files attached</li>'
 
   const additionalLines = (details?.additionalLines ?? []).filter(Boolean)

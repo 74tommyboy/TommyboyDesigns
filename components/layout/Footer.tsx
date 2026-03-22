@@ -61,7 +61,7 @@ export default function Footer() {
             <ul className="space-y-2">
               {[
                 { label: 'About', href: '/#about' },
-                { label: 'Custom Orders', href: '/collections/sip-drip-collection-custom-neck-tags' },
+                { label: 'Custom Orders', href: '/custom' },
                 { label: 'Shop All', href: '/shop' },
                 { label: 'Contact', href: '/contact' },
                 { label: 'Shipping Policy', href: '/policies/shipping' },
