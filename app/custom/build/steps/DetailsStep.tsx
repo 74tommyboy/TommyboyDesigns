@@ -1,18 +1,24 @@
 'use client'
 
+import { useState } from 'react'
 import { Plus, X } from 'lucide-react'
 import { TagDetails } from '@/lib/custom-inquiry-types'
 
 interface DetailsStepProps {
   details: TagDetails
   onChange: (details: TagDetails) => void
+  distilleries: string[]
 }
 
 const inputCls = 'w-full bg-navy-800/50 border border-white/10 rounded px-3 py-2.5 text-sm text-white placeholder:text-steel/40 focus:outline-none focus:border-amber-bourbon/50'
 const labelCls = 'block text-xs uppercase tracking-wider text-steel/60 mb-1.5'
 
-export default function DetailsStep({ details, onChange }: DetailsStepProps) {
+export default function DetailsStep({ details, onChange, distilleries }: DetailsStepProps) {
   const set = (patch: Partial<TagDetails>) => onChange({ ...details, ...patch })
+
+  const [isOther, setIsOther] = useState(
+    details.distillery !== '' && !distilleries.includes(details.distillery)
+  )
 
   const addLine = () => {
     if (details.additionalLines.length >= 3) return
@@ -35,7 +41,36 @@ export default function DetailsStep({ details, onChange }: DetailsStepProps) {
       <div className="space-y-4">
         <div>
           <label className={labelCls}>Distillery <span className="text-amber-bourbon">*</span></label>
-          <input type="text" value={details.distillery} onChange={(e) => set({ distillery: e.target.value })} placeholder="e.g. Buffalo Trace" className={inputCls} />
+          <select
+            value={isOther ? '__other__' : (details.distillery || '')}
+            onChange={(e) => {
+              if (e.target.value === '__other__') {
+                setIsOther(true)
+                set({ distillery: '' })
+              } else {
+                setIsOther(false)
+                set({ distillery: e.target.value })
+              }
+            }}
+            className={inputCls}
+          >
+            <option value="" disabled>Select a distillery / product…</option>
+            {distilleries.map((d) => (
+              <option key={d} value={d}>{d}</option>
+            ))}
+            <option value="__other__">Other / Not Listed</option>
+          </select>
+
+          {isOther && (
+            <input
+              type="text"
+              value={details.distillery}
+              onChange={(e) => set({ distillery: e.target.value })}
+              placeholder="Enter distillery or product name"
+              className={`${inputCls} mt-2`}
+              autoFocus
+            />
+          )}
         </div>
 
         <div>
