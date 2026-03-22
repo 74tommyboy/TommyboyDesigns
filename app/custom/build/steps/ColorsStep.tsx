@@ -17,6 +17,7 @@ export default function ColorsStep({ colors, onChange }: ColorsStepProps) {
     const next: ColorSlotType = {
       slot: colors.length + 1,
       hex: DEFAULT_COLORS[colors.length] ?? '#000000',
+      name: '',
       label: '',
     }
     onChange([...colors, next])
@@ -36,7 +37,7 @@ export default function ColorsStep({ colors, onChange }: ColorsStepProps) {
   return (
     <div>
       <h2 className="font-display text-white text-xl tracking-wider mb-2">CHOOSE YOUR COLORS</h2>
-      <p className="text-steel/60 text-sm mb-6">Add up to 4 colors. Type the color name (e.g. Black, Gold) and optionally pick an exact shade.</p>
+      <p className="text-steel/60 text-sm mb-6">Add up to 4 colors. Name each color and describe where it should be used (e.g. Base, Trim, Text).</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         {colors.map((slot, i) => (
@@ -44,6 +45,7 @@ export default function ColorsStep({ colors, onChange }: ColorsStepProps) {
             key={slot.slot}
             slot={slot}
             onHexChange={(hex) => updateColor(i, { hex })}
+            onNameChange={(name) => updateColor(i, { name })}
             onLabelChange={(label) => updateColor(i, { label })}
             onRemove={() => removeColor(i)}
             removable={colors.length > 1}

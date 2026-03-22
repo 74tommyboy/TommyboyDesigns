@@ -12,7 +12,8 @@ export type ShapeId = typeof SHAPES[number]['id']
 export interface ColorSlot {
   slot: number
   hex: string
-  label: string
+  name: string   // color name, e.g. "Black", "Gold"
+  label: string  // placement/role, e.g. "Base", "Trim", "Text"
 }
 
 export interface TagDetails {
@@ -47,7 +48,7 @@ export interface WizardState {
 
 export const INITIAL_WIZARD_STATE: WizardState = {
   shape: null,
-  colors: [{ slot: 1, hex: '#D97706', label: '' }],
+  colors: [{ slot: 1, hex: '#D97706', name: '', label: '' }],
   details: {
     distillery: '',
     year: '',

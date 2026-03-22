@@ -6,12 +6,13 @@ import { ColorSlot as ColorSlotType } from '@/lib/custom-inquiry-types'
 interface ColorSlotProps {
   slot: ColorSlotType
   onHexChange: (hex: string) => void
+  onNameChange: (name: string) => void
   onLabelChange: (label: string) => void
   onRemove: () => void
   removable: boolean
 }
 
-export default function ColorSlot({ slot, onHexChange, onLabelChange, onRemove, removable }: ColorSlotProps) {
+export default function ColorSlot({ slot, onHexChange, onNameChange, onLabelChange, onRemove, removable }: ColorSlotProps) {
   return (
     <div className="glass-card p-4 flex flex-col gap-3">
       <div className="flex items-center justify-between">
@@ -30,9 +31,17 @@ export default function ColorSlot({ slot, onHexChange, onLabelChange, onRemove, 
 
       <input
         type="text"
+        value={slot.name}
+        onChange={(e) => onNameChange(e.target.value)}
+        placeholder="Color name (e.g. Black, Gold, Navy Blue)"
+        className="w-full bg-navy-800/50 border border-white/10 rounded px-3 py-2 text-sm text-white placeholder:text-steel/40 focus:outline-none focus:border-amber-bourbon/50"
+      />
+
+      <input
+        type="text"
         value={slot.label}
         onChange={(e) => onLabelChange(e.target.value)}
-        placeholder="e.g. Black, Gold, Navy Blue…"
+        placeholder="Usage (e.g. Base, Trim, Text)"
         className="w-full bg-navy-800/50 border border-white/10 rounded px-3 py-2 text-sm text-white placeholder:text-steel/40 focus:outline-none focus:border-amber-bourbon/50"
       />
 

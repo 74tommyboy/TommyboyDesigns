@@ -81,12 +81,14 @@ function buildEmailHtml(
     ? (shapeData.isCircle ? `${shapeData.width}mm` : `${shapeData.width}mm × ${shapeData.height}mm`)
     : ''
 
-  const colorSwatches = (colors ?? []).map(c =>
-    `<span style="display:inline-flex;align-items:center;gap:6px;margin-right:12px;">
+  const colorSwatches = (colors ?? []).map(c => {
+    const display = [c.name, c.hex].filter(Boolean).join(' · ')
+    const role = c.label ? ` — ${c.label}` : ''
+    return `<span style="display:inline-flex;align-items:center;gap:6px;margin-right:12px;">
       <span style="display:inline-block;width:16px;height:16px;background:${c.hex};border-radius:3px;border:1px solid rgba(255,255,255,0.2);"></span>
-      <span style="color:#D1D5DB;font-size:13px;">${c.hex}${c.label ? ` (${c.label})` : ''}</span>
+      <span style="color:#D1D5DB;font-size:13px;">${display}${role}</span>
     </span>`
-  ).join('')
+  }).join('')
 
   const fileLinks = signedUrls.length > 0
     ? signedUrls.map((url, i) =>
