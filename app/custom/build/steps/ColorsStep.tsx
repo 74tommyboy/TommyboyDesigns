@@ -65,9 +65,9 @@ export default function ColorsStep({ colors, onChange, availableColors }: Colors
                   type="button"
                   title={`${c.color_name} (${c.material})`}
                   onClick={() => pickColor(c)}
-                  disabled={colors.length >= 4 || alreadyPicked}
+                  disabled={colors.length >= 4 && !alreadyPicked}
                   className={`w-7 h-7 rounded-full border-2 transition-opacity ${
-                    alreadyPicked ? 'border-amber-bourbon opacity-100' : 'border-white/20 hover:border-white/60'
+                    alreadyPicked ? 'border-amber-bourbon cursor-default' : 'border-white/20 hover:border-white/60'
                   } disabled:opacity-40 disabled:cursor-not-allowed`}
                   style={{ backgroundColor: c.color_hex }}
                   aria-label={`Add ${c.color_name}`}

@@ -15,7 +15,7 @@ export async function getAvailableFilamentColors(): Promise<AvailableColor[]> {
     .eq('key', 'low_stock_threshold_g')
     .single()
 
-  const threshold = setting ? parseInt(setting.value, 10) : 50
+  const threshold = setting ? (Number(setting.value) || 50) : 50
 
   const { data, error } = await supabase
     .from('filament_spools')
