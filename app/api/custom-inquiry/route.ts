@@ -75,7 +75,7 @@ function buildEmailHtml(
   shapeData: typeof SHAPES[number] | undefined,
   signedUrls: string[]
 ): string {
-  const { shape, colors, details, uploads, order } = state
+  const { shape, otherShapeDescription, colors, details, uploads, order } = state
 
   const dims = shapeData
     ? (shapeData.isCircle ? `${shapeData.width}mm` : `${shapeData.width}mm × ${shapeData.height}mm`)
@@ -123,7 +123,7 @@ function buildEmailHtml(
           <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
             <tr>
               <td style="color:#9CA3AF;font-size:12px;text-transform:uppercase;letter-spacing:2px;padding-bottom:8px;" width="140">Shape</td>
-              <td style="color:#D1D5DB;font-size:14px;padding-bottom:8px;">${shapeData?.label ?? shape}${dims ? ` — ${dims}` : ''}</td>
+              <td style="color:#D1D5DB;font-size:14px;padding-bottom:8px;">${shapeData?.label ?? shape}${dims ? ` — ${dims}` : ''}${shape === 'other' && otherShapeDescription ? `<br><span style="color:#9CA3AF;font-size:13px;">${otherShapeDescription}</span>` : ''}</td>
             </tr>
             <tr>
               <td style="color:#9CA3AF;font-size:12px;text-transform:uppercase;letter-spacing:2px;padding-bottom:8px;">Colors</td>

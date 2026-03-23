@@ -27,7 +27,7 @@ export default function BuildWizard({ distilleries }: BuildWizardProps) {
   const update = (patch: Partial<WizardState>) => setState(s => ({ ...s, ...patch }))
 
   const canNext: boolean = (() => {
-    if (step === 1) return state.shape !== null
+    if (step === 1) return state.shape !== null && (state.shape !== 'other' || state.otherShapeDescription.trim().length > 0)
     if (step === 2) return state.colors.length > 0
     if (step === 3) return state.details.distillery.trim().length > 0
     if (step === 4) return true  // uploads are optional
@@ -79,7 +79,7 @@ export default function BuildWizard({ distilleries }: BuildWizardProps) {
         <StepIndicator currentStep={step} />
 
         <div className="glass-card p-8">
-          {step === 1 && <ShapeStep selected={state.shape} onChange={(shape) => update({ shape })} />}
+          {step === 1 && <ShapeStep selected={state.shape} otherDescription={state.otherShapeDescription} onChange={(shape) => update({ shape })} onOtherDescription={(otherShapeDescription) => update({ otherShapeDescription })} />}
           {step === 2 && <ColorsStep colors={state.colors} onChange={(colors) => update({ colors })} />}
           {step === 3 && <DetailsStep details={state.details} onChange={(details) => update({ details })} distilleries={distilleries} />}
           {step === 4 && <UploadsStep uploads={state.uploads} onChange={(uploads) => update({ uploads })} />}

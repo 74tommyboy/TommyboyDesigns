@@ -5,6 +5,7 @@ export const SHAPES = [
   { id: 'shield',             label: 'Shield',            width: 50, height: 50, isCircle: false },
   { id: 'rounded_rectangle',  label: 'Rounded Rectangle', width: 30, height: 60, isCircle: false },
   { id: 'oblong',             label: 'Oval',              width: 40, height: 62, isCircle: false },
+  { id: 'other',              label: 'Other',             width: 50, height: 50, isCircle: false },
 ] as const
 
 export type ShapeId = typeof SHAPES[number]['id']
@@ -40,6 +41,7 @@ export interface OrderInfo {
 
 export interface WizardState {
   shape: ShapeId | null
+  otherShapeDescription: string
   colors: ColorSlot[]
   details: TagDetails
   uploads: UploadedFile[]
@@ -48,6 +50,7 @@ export interface WizardState {
 
 export const INITIAL_WIZARD_STATE: WizardState = {
   shape: null,
+  otherShapeDescription: '',
   colors: [{ slot: 1, hex: '#D97706', name: '', label: '' }],
   details: {
     distillery: '',
@@ -76,4 +79,5 @@ export const SHAPE_SVG_PATHS: Record<ShapeId, string> = {
   shield:            '<path d="M50 8 L88 24 L88 60 Q88 84 50 96 Q12 84 12 60 L12 24 Z" />',
   rounded_rectangle: '<rect x="30" y="10" width="40" height="80" rx="10" ry="10" />',
   oblong:            '<rect x="25" y="11" width="50" height="78" rx="25" ry="25" />',
+  other:             '<text x="50" y="58" text-anchor="middle" font-size="36" font-family="sans-serif">?</text>',
 }
