@@ -11,7 +11,7 @@ export default function ReviewTicker({ reviews }: { reviews: Review[] }) {
       <div className="section-label text-center mb-6">What Collectors Are Saying</div>
       <div className="relative">
         <div
-          className="flex animate-march gap-6 w-max [animation-duration:40s] hover:[animation-play-state:paused]"
+          className="flex animate-march gap-6 w-max [animation-duration:60s] hover:[animation-play-state:paused]"
         >
           {items.map((review, i) => (
             <div
