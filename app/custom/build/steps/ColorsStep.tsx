@@ -3,15 +3,29 @@
 import { Plus } from 'lucide-react'
 import ColorSlot from '@/components/custom/ColorSlot'
 import { ColorSlot as ColorSlotType } from '@/lib/custom-inquiry-types'
+import { AvailableColor } from '@/lib/queries/filament'
 
 interface ColorsStepProps {
   colors: ColorSlotType[]
   onChange: (colors: ColorSlotType[]) => void
+  availableColors: AvailableColor[]
 }
 
 const DEFAULT_COLORS = ['#D97706', '#0A0F1E', '#FFFFFF', '#4B5563']
 
-export default function ColorsStep({ colors, onChange }: ColorsStepProps) {
+export default function ColorsStep({ colors, onChange, availableColors }: ColorsStepProps) {
+  const pickColor = (c: AvailableColor) => {
+    if (colors.length >= 4) return
+    if (colors.some((s) => s.hex === c.color_hex)) return
+    const next: ColorSlotType = {
+      slot: colors.length + 1,
+      hex: c.color_hex,
+      name: c.color_name,
+      label: '',
+    }
+    onChange([...colors, next])
+  }
+
   const addColor = () => {
     if (colors.length >= 4) return
     const next: ColorSlotType = {
@@ -38,6 +52,31 @@ export default function ColorsStep({ colors, onChange }: ColorsStepProps) {
     <div>
       <h2 className="font-display text-white text-xl tracking-wider mb-2">CHOOSE YOUR COLORS</h2>
       <p className="text-steel/60 text-sm mb-6">Add up to 4 colors. Name each color and describe where it should be used (e.g. Base, Trim, Text).</p>
+
+      {availableColors.length > 0 && (
+        <div className="mb-6">
+          <p className="text-steel/60 text-xs uppercase tracking-wider mb-3">Available filament colors</p>
+          <div className="flex flex-wrap gap-2">
+            {availableColors.map((c) => {
+              const alreadyPicked = colors.some((s) => s.hex === c.color_hex)
+              return (
+                <button
+                  key={c.id}
+                  type="button"
+                  title={`${c.color_name} (${c.material})`}
+                  onClick={() => pickColor(c)}
+                  disabled={colors.length >= 4 || alreadyPicked}
+                  className={`w-7 h-7 rounded-full border-2 transition-opacity ${
+                    alreadyPicked ? 'border-amber-bourbon opacity-100' : 'border-white/20 hover:border-white/60'
+                  } disabled:opacity-40 disabled:cursor-not-allowed`}
+                  style={{ backgroundColor: c.color_hex }}
+                  aria-label={`Add ${c.color_name}`}
+                />
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         {colors.map((slot, i) => (

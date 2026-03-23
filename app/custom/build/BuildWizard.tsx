@@ -10,14 +10,16 @@ import DetailsStep from './steps/DetailsStep'
 import UploadsStep from './steps/UploadsStep'
 import OrderStep from './steps/OrderStep'
 import { INITIAL_WIZARD_STATE, WizardState } from '@/lib/custom-inquiry-types'
+import { AvailableColor } from '@/lib/queries/filament'
 
 const TOTAL_STEPS = 5
 
 interface BuildWizardProps {
   distilleries: string[]
+  availableColors: AvailableColor[]
 }
 
-export default function BuildWizard({ distilleries }: BuildWizardProps) {
+export default function BuildWizard({ distilleries, availableColors }: BuildWizardProps) {
   const router = useRouter()
   const [step, setStep] = useState(1)
   const [state, setState] = useState<WizardState>(INITIAL_WIZARD_STATE)
@@ -80,7 +82,7 @@ export default function BuildWizard({ distilleries }: BuildWizardProps) {
 
         <div className="glass-card p-8">
           {step === 1 && <ShapeStep selected={state.shape} otherDescription={state.otherShapeDescription} onChange={(shape) => update({ shape })} onOtherDescription={(otherShapeDescription) => update({ otherShapeDescription })} />}
-          {step === 2 && <ColorsStep colors={state.colors} onChange={(colors) => update({ colors })} />}
+          {step === 2 && <ColorsStep colors={state.colors} onChange={(colors) => update({ colors })} availableColors={availableColors} />}
           {step === 3 && <DetailsStep details={state.details} onChange={(details) => update({ details })} distilleries={distilleries} />}
           {step === 4 && <UploadsStep uploads={state.uploads} onChange={(uploads) => update({ uploads })} />}
           {step === 5 && <OrderStep order={state.order} onChange={(order) => update({ order })} />}
