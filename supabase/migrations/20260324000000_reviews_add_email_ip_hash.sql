@@ -1,0 +1,2 @@
+ALTER TABLE reviews ADD COLUMN IF NOT EXISTS email text;
+ALTER TABLE reviews ADD COLUMN IF NOT EXISTS ip_hash text;
