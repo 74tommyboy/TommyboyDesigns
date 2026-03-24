@@ -51,12 +51,19 @@ On submit, posts to `POST /api/reviews/public`. Shows a success message inline o
 - Otherwise → `verified: false`
 - If `claimed_purchaser: false` or no email → `verified: false`, no Shopify call
 
+**Supabase client:** Use the anon client for the insert (consistent with existing `POST /api/reviews`). If RLS on the `reviews` table does not allow anon inserts, use `supabaseAdmin` instead — but do not relax RLS.
+
 **On success:**
-1. Insert into `reviews` table with `approved: false`, `verified: <result>`, `email: <if provided>`, `product_handle: 'general'`, `product_title: 'TommyboyDesigns'`
+1. Insert into `reviews` table with `approved: false`, `verified: <result>`, `email: <if provided>`, `ip_hash: <hashed ip>`, `product_handle: 'general'`, `product_title: 'TommyboyDesigns'`
 2. Fire admin notification email via Resend
 3. Return `{ ok: true }` to client
 
-**Rate limiting:** Basic — one submission per IP per hour (via a simple in-memory check or Supabase insert guard) to prevent spam.
+**Input validation (server-enforced):**
+- `reviewer_name`: max 100 characters
+- `body`: max 2000 characters
+- `rating`: integer 1–5
+
+**Rate limiting:** One submission per IP per hour, enforced via Supabase. On each submission, query `reviews` for a row with the same `ip_hash` created within the last hour. If found, return 429. The real IP is read from the `X-Forwarded-For` header (Vercel proxy) and SHA-256 hashed before storage for privacy. Do not use in-memory rate limiting — serverless functions on Vercel have no persistent memory across invocations.
 
 ---
 
@@ -73,15 +80,20 @@ Email contents:
 
 **Signature (`sig`):** HMAC-SHA256 of `"id:action"` using `ADMIN_TOKEN_SECRET` env var. Prevents link forgery and cross-action reuse (an approve sig cannot be used to reject).
 
+**Supabase client:** Both approve and reject routes must use `supabaseAdmin` (from `lib/supabase-admin.ts`) — these are privileged mutations that must never go through the anon key.
+
 **`/api/admin/reviews/approve`:**
 - Validates sig
-- Sets `approved: true` on the review row
+- Checks that the review row exists and has `approved: false` (idempotency guard — replaying the link is a no-op)
+- Sets `approved: true`
 - Redirects to `/admin/reviews/done?action=approved`
 
 **`/api/admin/reviews/reject`:**
 - Validates sig
-- Deletes the review row
+- Deletes the review row (if already deleted, silently succeeds)
 - Redirects to `/admin/reviews/done?action=rejected`
+
+**Replay safety:** Review IDs are UUIDs (the existing `Review` type defines `id: string` and Supabase defaults to UUID primary keys). There is no integer ID reuse risk. The idempotency guard on the approve route handles the edge case of a replayed approve click.
 
 **`/admin/reviews/done` page:** Simple confirmation page ("Review approved / rejected") — no auth required since access is gated by the HMAC sig on the action routes.
 
@@ -89,17 +101,20 @@ Email contents:
 
 ## 4. Database Changes
 
-**Migration:** Add `email` column to the `reviews` table.
+**Migration:** Add `email` and `ip_hash` columns to the `reviews` table.
 
 ```sql
 ALTER TABLE reviews ADD COLUMN IF NOT EXISTS email text;
+ALTER TABLE reviews ADD COLUMN IF NOT EXISTS ip_hash text;
 ```
 
-New migration file: `supabase/migrations/20260324000000_reviews_add_email.sql`
+New migration file: `supabase/migrations/20260324000000_reviews_add_email_ip_hash.sql`
 
-The `email` field is nullable, not exposed in any public API response, and used only for admin notification context.
+Both fields are nullable. `email` is not exposed in any public API response and is used only for admin notification context. `ip_hash` is used for rate limiting lookups only.
 
-**Updated `Review` type in `lib/supabase.ts`:** Add `email?: string` (optional, omitted from public-facing components).
+The existing `POST /api/reviews` (token-based) insert path does not populate these columns and does not need to be updated — the columns are nullable and that flow is unaffected.
+
+**Updated `Review` type in `lib/supabase.ts`:** Add `email?: string` and `ip_hash?: string` (optional, omitted from public-facing components).
 
 ---
 
@@ -112,7 +127,7 @@ The `email` field is nullable, not exposed in any public API response, and used 
 | `app/api/admin/reviews/approve/route.ts` | HMAC-gated approve action |
 | `app/api/admin/reviews/reject/route.ts` | HMAC-gated reject action |
 | `app/admin/reviews/done/page.tsx` | Confirmation page after approve/reject |
-| `supabase/migrations/20260324000000_reviews_add_email.sql` | DB migration |
+| `supabase/migrations/20260324000000_reviews_add_email_ip_hash.sql` | DB migration |
 
 ---
 
@@ -123,7 +138,7 @@ The `email` field is nullable, not exposed in any public API response, and used 
 | `ADMIN_TOKEN_SECRET` | HMAC secret for approve/reject link signatures |
 | `SHOPIFY_ADMIN_ACCESS_TOKEN` | Shopify Admin API token for order lookup |
 | `SHOPIFY_STORE_DOMAIN` | e.g. `your-store.myshopify.com` |
-| `ADMIN_EMAIL` | Email address to send review notifications to |
+| `ADMIN_EMAIL` | Email address to send review notifications to (codebase also has `OWNER_EMAIL` for custom inquiry notifications — reuse or consolidate at implementation time) |
 
 `RESEND_API_KEY` and `NEXT_PUBLIC_SITE_URL` are already present.
 
