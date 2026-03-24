@@ -15,6 +15,7 @@ export default function ProductDetail({ product }: Props) {
   const images = product.images.edges.map((e) => e.node)
   const variants = product.variants.edges.map((e) => e.node)
   const isCustom = isCustomProduct(product)
+  const isBarware = product.collections.edges.some((e) => e.node.handle === 'barware-accessories-1')
 
   const [activeImage, setActiveImage] = useState(0)
   const [selectedVariant, setSelectedVariant] = useState<ShopifyVariant | null>(
@@ -203,10 +204,12 @@ export default function ProductDetail({ product }: Props) {
           />
         </div>
 
-        {/* Artwork upload — available on all products */}
-        <div className="tactical-divider pt-6">
-          <ArtworkUpload onUpload={setArtworkUrl} />
-        </div>
+        {/* Artwork upload — not shown for 3rd-party barware products */}
+        {!isBarware && (
+          <div className="tactical-divider pt-6">
+            <ArtworkUpload onUpload={setArtworkUrl} />
+          </div>
+        )}
 
         {/* Add to cart */}
         <AddToCart

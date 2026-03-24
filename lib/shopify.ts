@@ -137,6 +137,18 @@ export async function getProduct(handle: string): Promise<ShopifyProduct | null>
   return data.product
 }
 
+export async function getProductById(numericId: string): Promise<ShopifyProduct | null> {
+  const id = `gid://shopify/Product/${numericId}`
+  const data = await shopifyFetch<{ node: ShopifyProduct | null }>(`
+    query GetProductById($id: ID!) {
+      node(id: $id) {
+        ... on Product { ${PRODUCT_FRAGMENT} }
+      }
+    }
+  `, { id })
+  return data.node
+}
+
 export async function getCollections(): Promise<ShopifyCollection[]> {
   const data = await shopifyFetch<{ collections: { edges: Array<{ node: ShopifyCollection }> } }>(`
     query GetCollections {

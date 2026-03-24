@@ -29,10 +29,11 @@ export default function FeaturedProducts({ products }: Props) {
           const compareAt = product.compareAtPriceRange?.minVariantPrice
           const hasDiscount = compareAt && parseFloat(compareAt.amount) > parseFloat(price.amount)
 
+          const numericId = product.id.split('/').pop()
           return (
             <Link
               key={product.id}
-              href={`/products/${product.handle}`}
+              href={`/products/${product.handle}?id=${numericId}`}
               className="group glass-card overflow-hidden hover:border-amber-bourbon/30 transition-all duration-300 hover:shadow-amber-glow"
             >
               {/* Image */}

@@ -4,16 +4,17 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Script from 'next/script'
 import { ChevronRight } from 'lucide-react'
-import { getProduct, getProducts, formatMoney } from '@/lib/shopify'
+import { getProduct, getProductById, getProducts, formatMoney } from '@/lib/shopify'
 import ProductDetail from '@/components/product/ProductDetail'
 import ProductReviews from '@/components/product/ProductReviews'
 
 interface Props {
   params: { handle: string }
+  searchParams: { id?: string }
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const product = await getProduct(params.handle)
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+  const product = await getProduct(params.handle) ?? (searchParams.id ? await getProductById(searchParams.id) : null)
   if (!product) return { title: 'Product Not Found' }
   return {
     title: product.title,
@@ -26,11 +27,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export const dynamic = 'force-dynamic'
 
-export default async function ProductPage({ params }: Props) {
-  const [product, relatedProducts] = await Promise.all([
+export default async function ProductPage({ params, searchParams }: Props) {
+  const [productByHandle, relatedProducts] = await Promise.all([
     getProduct(params.handle),
     getProducts(5),
   ])
+  const product = productByHandle ?? (searchParams.id ? await getProductById(searchParams.id) : null)
 
   if (!product) notFound()
 
@@ -145,10 +147,11 @@ export default async function ProductPage({ params }: Props) {
               {related.map((p) => {
                 const img = p.images.edges[0]?.node
                 const price = p.priceRange.minVariantPrice
+                const numericId = p.id.split('/').pop()
                 return (
                   <Link
                     key={p.id}
-                    href={`/products/${p.handle}`}
+                    href={`/products/${p.handle}?id=${numericId}`}
                     className="group glass-card overflow-hidden hover:border-amber-bourbon/30 transition-all duration-300"
                   >
                     <div className="relative aspect-square overflow-hidden bg-navy-700">
