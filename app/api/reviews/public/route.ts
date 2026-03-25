@@ -1,8 +1,9 @@
 // app/api/reviews/public/route.ts
 import { NextRequest, NextResponse } from 'next/server'
-import { createHash, createHmac } from 'crypto'
+import { createHash } from 'crypto'
 import { Resend } from 'resend'
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { makeAdminSig } from '@/lib/admin-sig'
 
 export const dynamic = 'force-dynamic'
 
@@ -36,12 +37,6 @@ async function hasShopifyOrder(email: string): Promise<boolean> {
   } catch {
     return false
   }
-}
-
-function makeAdminSig(id: string, action: 'approve' | 'reject'): string {
-  return createHmac('sha256', process.env.ADMIN_TOKEN_SECRET!)
-    .update(`${id}:${action}`)
-    .digest('hex')
 }
 
 export async function POST(req: NextRequest) {

@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 async function getReviews(): Promise<Review[]> {
   const { data } = await supabase
     .from('reviews')
-    .select('*')
+    .select('id, reviewer_name, rating, body, verified, approved, created_at, product_handle, product_title')
     .eq('approved', true)
     .order('created_at', { ascending: false })
     .limit(20)

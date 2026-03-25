@@ -10,3 +10,9 @@ export function verifyAdminSig(id: string, action: 'approve' | 'reject', sig: st
     return false
   }
 }
+
+export function makeAdminSig(id: string, action: 'approve' | 'reject'): string {
+  return createHmac('sha256', process.env.ADMIN_TOKEN_SECRET!)
+    .update(`${id}:${action}`)
+    .digest('hex')
+}
