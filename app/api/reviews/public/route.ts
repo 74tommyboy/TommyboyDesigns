@@ -2,9 +2,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createHash, createHmac } from 'crypto'
 import { Resend } from 'resend'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 
 export const dynamic = 'force-dynamic'
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 const OWNER_EMAIL = process.env.OWNER_EMAIL ?? 'tommy@tommyboydesigns.com'
@@ -36,7 +45,13 @@ function makeAdminSig(id: string, action: 'approve' | 'reject'): string {
 }
 
 export async function POST(req: NextRequest) {
-  const body = await req.json()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let body: Record<string, any>
+  try {
+    body = await req.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+  }
   const { reviewer_name, rating, body: reviewBody, claimed_purchaser, email } = body
 
   // Input validation
@@ -59,7 +74,7 @@ export async function POST(req: NextRequest) {
   const ipHash = hashIp(rawIp)
 
   const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
-  const { data: recent } = await supabase
+  const { data: recent } = await supabaseAdmin
     .from('reviews')
     .select('id')
     .eq('ip_hash', ipHash)
@@ -74,11 +89,15 @@ export async function POST(req: NextRequest) {
   // Purchase verification
   let verified = false
   if (claimed_purchaser && email?.trim()) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email.trim())) {
+      return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
+    }
     verified = await hasShopifyOrder(email.trim())
   }
 
   // Insert review (approved: false — held for moderation)
-  const { data: inserted, error } = await supabase
+  const { data: inserted, error } = await supabaseAdmin
     .from('reviews')
     .insert({
       product_handle: 'general',
@@ -105,20 +124,24 @@ export async function POST(req: NextRequest) {
   const approveUrl = `${siteUrl}/api/admin/reviews/approve?id=${inserted.id}&sig=${approveSig}`
   const rejectUrl = `${siteUrl}/api/admin/reviews/reject?id=${inserted.id}&sig=${rejectSig}`
 
-  await resend.emails.send({
-    from: 'TommyboyDesigns <reviews@tommyboydesigns.com>',
-    to: OWNER_EMAIL,
-    subject: `New review pending approval — ${rating}★ from ${reviewer_name.trim()}`,
-    html: buildNotificationEmail({
-      reviewerName: reviewer_name.trim(),
-      rating,
-      body: reviewBody.trim(),
-      verified,
-      email: email?.trim() ?? null,
-      approveUrl,
-      rejectUrl,
-    }),
-  })
+  try {
+    await resend.emails.send({
+      from: 'TommyboyDesigns <reviews@tommyboydesigns.com>',
+      to: OWNER_EMAIL,
+      subject: `New review pending approval — ${rating}★ from ${reviewer_name.trim()}`,
+      html: buildNotificationEmail({
+        reviewerName: reviewer_name.trim(),
+        rating,
+        body: reviewBody.trim(),
+        verified,
+        email: email?.trim() ?? null,
+        approveUrl,
+        rejectUrl,
+      }),
+    })
+  } catch (emailErr) {
+    console.error('Failed to send review notification email:', emailErr)
+  }
 
   return NextResponse.json({ ok: true })
 }
@@ -145,14 +168,14 @@ function buildNotificationEmail(opts: {
           <p style="margin:0 0 8px;color:#D97706;font-size:11px;letter-spacing:4px;text-transform:uppercase;">New Review Pending Approval</p>
           <p style="margin:0 0 24px;color:#D1D5DB;font-size:22px;">${stars}</p>
           <p style="margin:0 0 4px;color:#9CA3AF;font-size:12px;text-transform:uppercase;letter-spacing:2px;">From</p>
-          <p style="margin:0 0 16px;color:#F9FAFB;font-size:16px;font-weight:bold;">${opts.reviewerName}</p>
-          ${opts.email ? `<p style="margin:0 0 16px;color:#6B7280;font-size:13px;">Email: ${opts.email}</p>` : ''}
+          <p style="margin:0 0 16px;color:#F9FAFB;font-size:16px;font-weight:bold;">${escapeHtml(opts.reviewerName)}</p>
+          ${opts.email ? `<p style="margin:0 0 16px;color:#6B7280;font-size:13px;">Email: ${escapeHtml(opts.email)}</p>` : ''}
           <p style="margin:0 0 4px;color:#9CA3AF;font-size:12px;text-transform:uppercase;letter-spacing:2px;">Status</p>
           <p style="margin:0 0 24px;color:${opts.verified ? '#D97706' : '#6B7280'};font-size:13px;font-weight:bold;">
             ${opts.verified ? '✓ Verified Purchase' : 'Unverified'}
           </p>
           <p style="margin:0 0 4px;color:#9CA3AF;font-size:12px;text-transform:uppercase;letter-spacing:2px;">Review</p>
-          <p style="margin:0 0 32px;color:#D1D5DB;font-size:15px;line-height:1.7;border-left:3px solid rgba(217,119,6,0.4);padding-left:16px;">${opts.body}</p>
+          <p style="margin:0 0 32px;color:#D1D5DB;font-size:15px;line-height:1.7;border-left:3px solid rgba(217,119,6,0.4);padding-left:16px;">${escapeHtml(opts.body)}</p>
           <table cellpadding="0" cellspacing="0"><tr>
             <td style="padding-right:12px;">
               <a href="${opts.approveUrl}" style="display:inline-block;background:#D97706;color:#0A0F1E;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;text-decoration:none;padding:12px 28px;border-radius:4px;">Approve</a>
