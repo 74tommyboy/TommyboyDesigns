@@ -1,20 +1,9 @@
 // app/api/admin/reviews/reject/route.ts
 import { NextRequest, NextResponse } from 'next/server'
-import { createHmac, timingSafeEqual } from 'crypto'
+import { verifyAdminSig } from '@/lib/admin-sig'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 
 export const dynamic = 'force-dynamic'
-
-function verifyAdminSig(id: string, action: 'approve' | 'reject', sig: string): boolean {
-  const expected = createHmac('sha256', process.env.ADMIN_TOKEN_SECRET!)
-    .update(`${id}:${action}`)
-    .digest('hex')
-  try {
-    return timingSafeEqual(Buffer.from(sig, 'hex'), Buffer.from(expected, 'hex'))
-  } catch {
-    return false
-  }
-}
 
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get('id') ?? ''
