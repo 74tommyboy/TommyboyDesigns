@@ -66,6 +66,7 @@ export default function Footer() {
                 { label: 'Contact', href: '/contact' },
                 { label: 'Shipping Policy', href: '/policies/shipping' },
                 { label: 'Return Policy', href: '/policies/returns' },
+                { label: 'Reviews', href: '/reviews' },
               ].map((link) => (
                 <li key={link.href}>
                   <Link
