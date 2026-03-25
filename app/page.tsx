@@ -4,6 +4,7 @@ import FeaturedProducts from '@/components/home/FeaturedProducts'
 import CollectionGrid from '@/components/home/CollectionGrid'
 import AboutStrip from '@/components/home/AboutStrip'
 import ReviewTicker from '@/components/home/ReviewTicker'
+import ReviewsSection from '@/components/home/ReviewsSection'
 import { getProducts, getCollections } from '@/lib/shopify'
 import { supabase, Review } from '@/lib/supabase'
 
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
 async function getReviews(): Promise<Review[]> {
   const { data } = await supabase
     .from('reviews')
-    .select('*')
+    .select('id, reviewer_name, rating, body, verified, approved, created_at, product_handle, product_title')
     .eq('approved', true)
     .order('created_at', { ascending: false })
     .limit(20)
@@ -49,6 +50,7 @@ export default async function HomePage() {
       <CollectionGrid collections={collections} />
       <AboutStrip />
       <ReviewTicker reviews={reviews} />
+      <ReviewsSection reviews={reviews} />
     </>
   )
 }
