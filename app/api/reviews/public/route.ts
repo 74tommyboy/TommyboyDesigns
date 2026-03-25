@@ -40,14 +40,18 @@ async function hasShopifyOrder(email: string): Promise<boolean> {
 }
 
 export async function POST(req: NextRequest) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let body: Record<string, any>
+  let parsed: unknown
   try {
-    body = await req.json()
+    parsed = await req.json()
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
-  const { reviewer_name, rating, body: reviewBody, claimed_purchaser, email } = body
+  const raw = parsed as Record<string, unknown>
+  const reviewer_name = raw.reviewer_name as string | undefined
+  const rating = raw.rating as number | undefined
+  const reviewBody = raw.body as string | undefined
+  const claimed_purchaser = raw.claimed_purchaser as boolean | undefined
+  const email = raw.email as string | undefined
 
   // Input validation
   if (!reviewer_name?.trim() || !rating || !reviewBody?.trim()) {
