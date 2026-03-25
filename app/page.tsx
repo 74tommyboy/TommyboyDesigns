@@ -4,6 +4,7 @@ import FeaturedProducts from '@/components/home/FeaturedProducts'
 import CollectionGrid from '@/components/home/CollectionGrid'
 import AboutStrip from '@/components/home/AboutStrip'
 import ReviewTicker from '@/components/home/ReviewTicker'
+import ReviewsSection from '@/components/home/ReviewsSection'
 import { getProducts, getCollections } from '@/lib/shopify'
 import { supabase, Review } from '@/lib/supabase'
 
@@ -49,6 +50,7 @@ export default async function HomePage() {
       <CollectionGrid collections={collections} />
       <AboutStrip />
       <ReviewTicker reviews={reviews} />
+      <ReviewsSection reviews={reviews} />
     </>
   )
 }
