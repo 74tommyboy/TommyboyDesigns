@@ -15,4 +15,6 @@ export type Review = {
   verified: boolean
   approved: boolean
   created_at: string
+  email?: string    // admin-only, not exposed publicly
+  ip_hash?: string  // rate limiting only
 }
