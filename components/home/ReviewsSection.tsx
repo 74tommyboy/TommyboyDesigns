@@ -173,7 +173,6 @@ export default function ReviewsSection({ reviews }: { reviews: Review[] }) {
                         ? 'bg-amber-bourbon border-amber-bourbon'
                         : 'border-white/20 bg-navy-900'
                     )}
-                    onClick={() => setClaimedPurchaser(!claimedPurchaser)}
                   >
                     {claimedPurchaser && (
                       <svg viewBox="0 0 12 12" className="w-full h-full p-0.5 text-navy-950" fill="currentColor">
