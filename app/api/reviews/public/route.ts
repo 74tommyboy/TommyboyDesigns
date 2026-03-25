@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
     .eq('ip_hash', ipHash)
     .gte('created_at', oneHourAgo)
     .limit(1)
-    .single()
+    .maybeSingle()
 
   if (recent) {
     return NextResponse.json({ error: 'Too many submissions. Please try again in an hour.' }, { status: 429 })
