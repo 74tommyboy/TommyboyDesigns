@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: 'Design a fully custom bourbon neck tag — choose your shape, colors, and text. Veteran owned & operated.',
 }
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export default async function CustomPage() {
   const allProducts = await getProducts(250)

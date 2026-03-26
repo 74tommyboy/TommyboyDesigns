@@ -80,7 +80,7 @@ export default function Hero() {
               <div className="relative rounded-lg overflow-hidden shadow-glass">
                 <div className="absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-amber-bourbon to-transparent z-10" />
                 <Image
-                  src="/hero.png"
+                  src="/hero.webp"
                   alt="Bourbon bottles with custom neck tags"
                   width={640}
                   height={420}

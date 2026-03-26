@@ -10,10 +10,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Shop Bourbon Collector Neck Tags | TommyboyDesigns',
     description: 'All 3D-printed bourbon bottle neck tags — BTAC, Pappy Van Winkle, custom designs and barware.',
-    images: [{ url: '/hero.png', width: 640, height: 420, alt: 'TommyboyDesigns bourbon neck tags collection' }],
+    images: [{ url: '/hero-og.webp', width: 1200, height: 630, alt: 'TommyboyDesigns bourbon neck tags collection' }],
   },
 }
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export default async function ShopPage() {
   const products = await getProducts(50)

@@ -1,5 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async redirects() {
+    return [
+      {
+        source: '/products/copy-btac-eht-bourbon-bottle-neck-tags',
+        destination: '/products/btac-eht-bourbon-bottle-neck-tags',
+        permanent: true,
+      },
+    ]
+  },
   images: {
     remotePatterns: [
       {

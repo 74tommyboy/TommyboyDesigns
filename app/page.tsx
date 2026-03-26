@@ -7,7 +7,7 @@ import ReviewTicker from '@/components/home/ReviewTicker'
 import { getProducts, getCollections } from '@/lib/shopify'
 import { supabase, Review } from '@/lib/supabase'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Bourbon Collector Neck Tags | 3D-Printed BTAC & Pappy Van Winkle Tags',
@@ -15,13 +15,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Bourbon Collector Neck Tags | TommyboyDesigns',
     description: 'Precision-crafted 3D-printed bourbon bottle neck tags for serious collectors. BTAC, Pappy Van Winkle, and custom designs.',
-    images: [{ url: '/hero.png', width: 640, height: 420, alt: 'Bourbon bottles with custom TommyboyDesigns neck tags' }],
+    images: [{ url: '/hero-og.webp', width: 1200, height: 630, alt: 'Bourbon bottles with custom TommyboyDesigns neck tags' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Bourbon Collector Neck Tags | TommyboyDesigns',
     description: 'Precision-crafted 3D-printed bourbon bottle neck tags. Starting at $7.49.',
-    images: ['/hero.png'],
+    images: ['/hero-og.webp'],
   },
 }
 

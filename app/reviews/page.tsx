@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import ReviewsSection from '@/components/home/ReviewsSection'
 import { supabase, Review } from '@/lib/supabase'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Customer Reviews | TommyboyDesigns',

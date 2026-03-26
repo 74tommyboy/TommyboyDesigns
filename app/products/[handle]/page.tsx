@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Script from 'next/script'
 import { ChevronRight } from 'lucide-react'
 import { getProduct, getProductById, getProducts, formatMoney } from '@/lib/shopify'
+import { getProductRating } from '@/lib/supabase'
 import ProductDetail from '@/components/product/ProductDetail'
 import ProductReviews from '@/components/product/ProductReviews'
 
@@ -19,18 +20,22 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   return {
     title: product.title,
     description: product.description,
+    alternates: {
+      canonical: `https://www.tommyboydesigns.com/products/${params.handle}`,
+    },
     openGraph: {
       images: [product.images.edges[0]?.node.url].filter(Boolean) as string[],
     },
   }
 }
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export default async function ProductPage({ params, searchParams }: Props) {
-  const [productByHandle, relatedProducts] = await Promise.all([
+  const [productByHandle, relatedProducts, rating] = await Promise.all([
     getProduct(params.handle),
     getProducts(5),
+    getProductRating(params.handle),
   ])
   const product = productByHandle ?? (searchParams.id ? await getProductById(searchParams.id) : null)
 
@@ -50,6 +55,15 @@ export default async function ProductPage({ params, searchParams }: Props) {
     description: product.description,
     image: productImage,
     brand: { '@type': 'Brand', name: 'TommyboyDesigns' },
+    ...(rating && {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: rating.average,
+        reviewCount: rating.count,
+        bestRating: 5,
+        worstRating: 1,
+      },
+    }),
     offers: {
       '@type': 'Offer',
       url: `https://www.tommyboydesigns.com/products/${product.handle}`,

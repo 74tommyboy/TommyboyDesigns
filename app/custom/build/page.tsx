@@ -2,7 +2,7 @@ import { getCollection } from '@/lib/shopify'
 import { getAvailableFilamentColors, AvailableColor } from '@/lib/queries/filament'
 import BuildWizard from './BuildWizard'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 const NECK_TAG_COLLECTION = 'sip-drip-collection-custom-neck-tags'
 

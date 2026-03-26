@@ -12,10 +12,16 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const collection = await getCollection(params.handle)
   if (!collection) return { title: 'Collection Not Found' }
-  return { title: collection.title, description: collection.description }
+  return {
+    title: collection.title,
+    description: collection.description,
+    alternates: {
+      canonical: `https://www.tommyboydesigns.com/collections/${params.handle}`,
+    },
+  }
 }
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export default async function CollectionPage({ params }: Props) {
   const collection = await getCollection(params.handle)

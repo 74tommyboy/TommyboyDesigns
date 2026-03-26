@@ -30,6 +30,7 @@ export interface ShopifyProduct {
   description: string
   descriptionHtml: string
   tags: string[]
+  updatedAt: string
   priceRange: {
     minVariantPrice: { amount: string; currencyCode: string }
     maxVariantPrice: { amount: string; currencyCode: string }
@@ -56,6 +57,7 @@ export interface ShopifyCollection {
   handle: string
   title: string
   description: string
+  updatedAt: string
   image: { url: string; altText: string | null } | null
   products: { edges: Array<{ node: ShopifyProduct }> }
 }
@@ -91,6 +93,7 @@ const PRODUCT_FRAGMENT = `
   description
   descriptionHtml
   tags
+  updatedAt
   priceRange {
     minVariantPrice { amount currencyCode }
     maxVariantPrice { amount currencyCode }
@@ -155,7 +158,7 @@ export async function getCollections(): Promise<ShopifyCollection[]> {
       collections(first: 20) {
         edges {
           node {
-            id handle title description
+            id handle title description updatedAt
             image { url altText }
             products(first: 4) {
               edges { node { ${PRODUCT_FRAGMENT} } }
@@ -172,7 +175,7 @@ export async function getCollection(handle: string): Promise<ShopifyCollection |
   const data = await shopifyFetch<{ collection: ShopifyCollection | null }>(`
     query GetCollection($handle: String!) {
       collection(handle: $handle) {
-        id handle title description
+        id handle title description updatedAt
         image { url altText }
         products(first: 50) {
           edges { node { ${PRODUCT_FRAGMENT} } }

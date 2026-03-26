@@ -4,8 +4,8 @@ import { ArrowRight } from 'lucide-react'
 import { ShopifyCollection } from '@/lib/shopify'
 
 const LOCAL_BANNERS: Record<string, string> = {
-  'barware-accessories-1': '/banner-barware.png',
-  'sip-drip-collection-custom-neck-tags': '/banner-necktags.png',
+  'barware-accessories-1': '/banner-barware.webp',
+  'sip-drip-collection-custom-neck-tags': '/banner-necktags.webp',
 }
 
 interface Props {

@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'TommyboyDesigns | Bourbon Bottle Neck Tags',
     description: 'Precision-crafted 3D-printed bourbon bottle neck tags for serious collectors.',
-    images: ['/hero.png'],
+    images: ['/hero-og.webp'],
   },
 }
 
