@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Script from 'next/script'
 import { ChevronRight } from 'lucide-react'
 import { getProduct, getProductById, getProducts, formatMoney } from '@/lib/shopify'
-import { getProductRating } from '@/lib/supabase'
+import { getProductRating, getProductReviews } from '@/lib/supabase'
 import ProductDetail from '@/components/product/ProductDetail'
 import ProductReviews from '@/components/product/ProductReviews'
 
@@ -32,10 +32,11 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
 export const revalidate = 60
 
 export default async function ProductPage({ params, searchParams }: Props) {
-  const [productByHandle, relatedProducts, rating] = await Promise.all([
+  const [productByHandle, relatedProducts, rating, reviews] = await Promise.all([
     getProduct(params.handle),
     getProducts(5),
     getProductRating(params.handle),
+    getProductReviews(params.handle),
   ])
   const product = productByHandle ?? (searchParams.id ? await getProductById(searchParams.id) : null)
 
@@ -64,6 +65,19 @@ export default async function ProductPage({ params, searchParams }: Props) {
         worstRating: 1,
       },
     }),
+    ...(reviews.length > 0 && {
+      review: reviews.map(r => ({
+        '@type': 'Review',
+        reviewRating: {
+          '@type': 'Rating',
+          ratingValue: r.rating,
+          bestRating: 5,
+        },
+        author: { '@type': 'Person', name: r.reviewer_name },
+        reviewBody: r.body,
+        datePublished: r.created_at.split('T')[0],
+      })),
+    }),
     offers: {
       '@type': 'Offer',
       url: `https://www.tommyboydesigns.com/products/${product.handle}`,
@@ -77,6 +91,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
         shippingRate: {
           '@type': 'MonetaryAmount',
           currency: 'USD',
+          value: 0,
         },
         shippingDestination: {
           '@type': 'DefinedRegion',

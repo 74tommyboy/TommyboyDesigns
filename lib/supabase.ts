@@ -5,6 +5,17 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
+export async function getProductReviews(productHandle: string): Promise<Pick<Review, 'reviewer_name' | 'rating' | 'body' | 'created_at'>[]> {
+  const { data } = await supabase
+    .from('reviews')
+    .select('reviewer_name, rating, body, created_at')
+    .eq('product_handle', productHandle)
+    .eq('approved', true)
+    .order('created_at', { ascending: false })
+    .limit(5)
+  return data ?? []
+}
+
 export async function getProductRating(productHandle: string): Promise<{ average: number; count: number } | null> {
   const { data, error } = await supabase
     .from('reviews')

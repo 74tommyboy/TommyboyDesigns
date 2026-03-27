@@ -77,7 +77,7 @@ export async function GET(req: NextRequest) {
     const reviewUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/reviews/${row.token}?order=${row.order_id}&email=${encodeURIComponent(row.email)}`
 
     const { error: sendError } = await resend.emails.send({
-      from: 'TommyboyDesigns <review_submission@contact.tommyboydesigns.com>',
+      from: 'TommyboyDesigns <reviews@tommyboydesigns.com>',
       to: row.email,
       subject: "How's your TommyboyDesigns neck tag holding up?",
       html: buildEmailHtml(row.customer_name, row.line_items, reviewUrl),

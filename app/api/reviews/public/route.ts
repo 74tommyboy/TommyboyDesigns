@@ -125,7 +125,7 @@ export async function POST(req: NextRequest) {
 
   try {
     await resend.emails.send({
-      from: 'TommyboyDesigns <review_submission@contact.tommyboydesigns.com>',
+      from: 'TommyboyDesigns <reviews@tommyboydesigns.com>',
       to: OWNER_EMAIL,
       subject: `New review pending approval — ${rating}★ from ${reviewer_name.trim()}`,
       html: buildNotificationEmail({

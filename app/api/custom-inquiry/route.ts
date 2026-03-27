@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
       notes: order.notes ?? '',
     }),
     resend.emails.send({
-      from: 'TommyboyDesigns <orders@contact.tommyboydesigns.com>',
+      from: 'TommyboyDesigns <orders@tommyboydesigns.com>',
       to: OWNER_EMAIL,
       subject: `New Custom Tag Inquiry — ${details?.distillery ?? 'Unknown'} (${order.name})`,
       html: buildEmailHtml(body, shapeData, signedUrls),
