@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
     const resend = new Resend(process.env.RESEND_API_KEY)
     const stars = '★'.repeat(Number(rating)) + '☆'.repeat(5 - Number(rating))
     await resend.emails.send({
-      from: 'TommyboyDesigns <reviews@tommyboydesigns.com>',
+      from: 'TommyboyDesigns <review_submission@contact.tommyboydesigns.com>',
       to: process.env.OWNER_EMAIL ?? '',
       subject: `New verified review — ${rating}★ from ${reviewer_name}`,
       html: `
