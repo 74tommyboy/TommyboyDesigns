@@ -46,10 +46,10 @@ export default function ArtworkUpload({ onUpload }: Props) {
         onUpload(data.secure_url)
         setStatus('done')
       } else {
-        throw new Error('Upload failed')
+        throw new Error(data.error?.message ?? 'Upload failed')
       }
-    } catch {
-      setErrorMsg('Upload failed. Please try again.')
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : 'Upload failed. Please try again.')
       setStatus('error')
     }
   }, [onUpload])
