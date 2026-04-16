@@ -43,9 +43,20 @@ export async function POST(req: NextRequest) {
     if (!Array.isArray(messages) || messages.length === 0) {
       return new Response('Invalid messages', { status: 400 })
     }
+    const isValid = messages.every(
+      m => (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string'
+    )
+    if (!isValid) return new Response('Invalid message shape', { status: 400 })
   } catch {
     return new Response('Invalid JSON', { status: 400 })
   }
+
+  const MAX_MESSAGES = 20
+  const MAX_CONTENT_LENGTH = 1000
+  const safeMessages = messages.slice(-MAX_MESSAGES).map(m => ({
+    ...m,
+    content: m.content.slice(0, MAX_CONTENT_LENGTH),
+  }))
 
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
   const products = await getProducts(50)
@@ -55,7 +66,7 @@ export async function POST(req: NextRequest) {
     model: 'gpt-4o-mini',
     messages: [
       { role: 'system', content: systemPrompt },
-      ...messages,
+      ...safeMessages,
     ],
     stream: true,
     max_tokens: 300,
@@ -69,49 +80,53 @@ export async function POST(req: NextRequest) {
 
   const readableStream = new ReadableStream({
     async start(controller) {
-      for await (const chunk of stream) {
-        const text = chunk.choices[0]?.delta?.content ?? ''
-        if (!text) continue
+      try {
+        for await (const chunk of stream) {
+          const text = chunk.choices[0]?.delta?.content ?? ''
+          if (!text) continue
 
-        if (!markerChecked) {
-          buffer += text
-          if (buffer.length >= MARKER.length) {
-            markerChecked = true
-            if (buffer.startsWith(MARKER)) {
-              isCustomOrder = true
-              const cleaned = buffer.slice(MARKER.length).trimStart()
-              if (cleaned) controller.enqueue(encoder.encode(cleaned))
-            } else {
-              controller.enqueue(encoder.encode(buffer))
+          if (!markerChecked) {
+            buffer += text
+            if (buffer.length >= MARKER.length) {
+              markerChecked = true
+              if (buffer.startsWith(MARKER)) {
+                isCustomOrder = true
+                const cleaned = buffer.slice(MARKER.length).trimStart()
+                if (cleaned) controller.enqueue(encoder.encode(cleaned))
+              } else {
+                controller.enqueue(encoder.encode(buffer))
+              }
+              buffer = ''
             }
-            buffer = ''
+          } else {
+            controller.enqueue(encoder.encode(text))
           }
-        } else {
-          controller.enqueue(encoder.encode(text))
         }
-      }
 
-      // Flush buffer if response was shorter than MARKER.length
-      if (buffer) {
-        const cleaned = buffer.startsWith(MARKER)
-          ? buffer.slice(MARKER.length).trimStart()
-          : buffer
-        if (cleaned) controller.enqueue(encoder.encode(cleaned))
-      }
+        // Flush buffer if response was shorter than MARKER.length
+        if (buffer) {
+          const cleaned = buffer.startsWith(MARKER)
+            ? buffer.slice(MARKER.length).trimStart()
+            : buffer
+          if (cleaned) controller.enqueue(encoder.encode(cleaned))
+        }
 
-      if (isCustomOrder) {
-        const transcript = messages
-          .map(m => `${m.role.toUpperCase()}: ${m.content}`)
-          .join('\n\n')
-        await resend.emails.send({
-          from: 'TommyboyDesigns <orders@tommyboydesigns.com>',
-          to: OWNER_EMAIL,
-          subject: 'Chat inquiry: potential custom order',
-          text: `A customer expressed interest in a custom order via the chat widget.\n\nCONVERSATION TRANSCRIPT:\n\n${transcript}`,
-        })
+        if (isCustomOrder) {
+          const transcript = safeMessages
+            .map(m => `${m.role.toUpperCase()}: ${m.content}`)
+            .join('\n\n')
+          await resend.emails.send({
+            from: 'TommyboyDesigns <orders@tommyboydesigns.com>',
+            to: OWNER_EMAIL,
+            subject: 'Chat inquiry: potential custom order',
+            text: `A customer expressed interest in a custom order via the chat widget.\n\nCONVERSATION TRANSCRIPT:\n\n${transcript}`,
+          })
+        }
+      } catch (err) {
+        controller.error(err)
+      } finally {
+        controller.close()
       }
-
-      controller.close()
     },
   })
 
