@@ -18,6 +18,7 @@ export default function ChatWidget() {
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const abortRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -27,9 +28,16 @@ export default function ChatWidget() {
     if (isOpen) inputRef.current?.focus()
   }, [isOpen])
 
+  useEffect(() => {
+    if (!isOpen) abortRef.current?.abort()
+  }, [isOpen])
+
   async function handleSend() {
     const trimmed = input.trim()
     if (!trimmed || isLoading) return
+
+    abortRef.current?.abort()
+    abortRef.current = new AbortController()
 
     const userMessage: Message = { role: 'user', content: trimmed }
     const nextMessages = [...messages, userMessage]
@@ -43,6 +51,7 @@ export default function ChatWidget() {
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
+        signal: abortRef.current.signal,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: nextMessages.map(m => ({ role: m.role, content: m.content })),
@@ -55,17 +64,34 @@ export default function ChatWidget() {
       const decoder = new TextDecoder()
       let assistantText = ''
 
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        const chunk = decoder.decode(value, { stream: true })
-        assistantText += chunk
-        setMessages(prev => [
-          ...prev.slice(0, -1),
-          { role: 'assistant', content: assistantText },
-        ])
+      try {
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+          const chunk = decoder.decode(value, { stream: true })
+          assistantText += chunk
+          setMessages(prev => [
+            ...prev.slice(0, -1),
+            { role: 'assistant', content: assistantText },
+          ])
+        }
+        // flush any remaining bytes
+        const remaining = decoder.decode()
+        if (remaining) {
+          setMessages(prev => [
+            ...prev.slice(0, -1),
+            { role: 'assistant', content: assistantText + remaining },
+          ])
+        }
+      } finally {
+        reader.cancel()
       }
-    } catch {
+    } catch (e) {
+      if (e instanceof DOMException && e.name === 'AbortError') {
+        // Request was intentionally cancelled — remove the empty placeholder
+        setMessages(prev => prev[prev.length - 1]?.content === '' ? prev.slice(0, -1) : prev)
+        return
+      }
       setMessages(prev => [
         ...prev.slice(0, -1),
         {
@@ -88,7 +114,7 @@ export default function ChatWidget() {
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
       {isOpen && (
-        <div className="w-[350px] flex flex-col rounded-xl border border-amber-bourbon/20 bg-navy-950 shadow-2xl overflow-hidden">
+        <div className="w-[350px] flex flex-col rounded-xl border border-amber-bourbon/20 bg-navy-950 shadow-2xl overflow-hidden" role="dialog" aria-label="Chat with Tommy's Assistant">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 bg-navy-900 border-b border-amber-bourbon/20">
             <div className="flex items-center gap-2">
@@ -107,7 +133,7 @@ export default function ChatWidget() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 max-h-[380px] min-h-[200px]">
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 max-h-[380px] min-h-[200px]" aria-live="polite">
             {messages.map((msg, i) => (
               <div
                 key={i}
@@ -140,6 +166,7 @@ export default function ChatWidget() {
               onKeyDown={handleKeyDown}
               disabled={isLoading}
               placeholder="Ask about our tags..."
+              aria-label="Chat message input"
               className="flex-1 bg-navy-800 text-steel-200 placeholder-steel-500 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-amber-bourbon/50 disabled:opacity-50"
             />
             <button
