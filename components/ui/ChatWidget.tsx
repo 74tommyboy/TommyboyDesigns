@@ -6,6 +6,33 @@ import { cn } from '@/lib/utils'
 
 type Message = { role: 'user' | 'assistant'; content: string }
 
+const URL_REGEX = /(https?:\/\/[^\s]+|\/[a-z0-9][a-z0-9\-/]*)/g
+
+function renderContent(text: string) {
+  const parts: (string | JSX.Element)[] = []
+  let last = 0
+  let match: RegExpExecArray | null
+  URL_REGEX.lastIndex = 0
+  while ((match = URL_REGEX.exec(text)) !== null) {
+    if (match.index > last) parts.push(text.slice(last, match.index))
+    const url = match[0]
+    const isExternal = url.startsWith('http')
+    parts.push(
+      <a
+        key={match.index}
+        href={url}
+        className="underline text-amber-bourbon hover:text-amber-bourbon/80"
+        {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      >
+        {url}
+      </a>
+    )
+    last = match.index + url.length
+  }
+  if (last < text.length) parts.push(text.slice(last))
+  return parts
+}
+
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
@@ -144,7 +171,9 @@ export default function ChatWidget() {
                     : 'bg-navy-800 text-steel-200'
                 )}
               >
-                {msg.content || (
+                {msg.content ? (
+                  msg.role === 'assistant' ? renderContent(msg.content) : msg.content
+                ) : (
                   <span className="flex gap-1 items-center h-4">
                     <span className="w-1.5 h-1.5 rounded-full bg-steel-400 animate-bounce [animation-delay:0ms]" />
                     <span className="w-1.5 h-1.5 rounded-full bg-steel-400 animate-bounce [animation-delay:150ms]" />

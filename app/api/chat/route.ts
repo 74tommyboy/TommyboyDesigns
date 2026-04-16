@@ -14,7 +14,7 @@ function buildSystemPrompt(products: ShopifyProduct[]): string {
   const productList = products
     .map(p => {
       const price = p.priceRange.minVariantPrice
-      return `- ${p.title} — $${parseFloat(price.amount).toFixed(2)} — ${p.description}`
+      return `- ${p.title} — $${parseFloat(price.amount).toFixed(2)} — ${p.description} — URL: /products/${p.handle}`
     })
     .join('\n')
 
