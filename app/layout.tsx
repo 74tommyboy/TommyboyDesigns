@@ -5,6 +5,7 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { CartProvider } from '@/components/layout/CartProvider'
 import ReviewPopup from '@/components/ui/ReviewPopup'
+import ChatWidget from '@/components/ui/ChatWidget'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.tommyboydesigns.com'),
@@ -78,6 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="min-h-dvh">{children}</main>
           <Footer />
           <ReviewPopup />
+          <ChatWidget />
         </CartProvider>
       </body>
     </html>
