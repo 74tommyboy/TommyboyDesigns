@@ -8,7 +8,20 @@
       "Bash(npx tsc:*)",
       "Bash(npm run:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git:*)",
+      "Bash(SKILL_DIR=\"C:/Users/El_Gu/.claude/plugins/cache/playwright-skill/playwright-skill/4.1.0/skills/playwright-skill\")",
+      "Read(//c/Users/El_Gu/Projects/TommyboyDesigns-V2/**)",
+      "Bash(node -e \"require\\(''./lib/helpers''\\).detectDevServers\\(\\).then\\(servers => console.log\\(JSON.stringify\\(servers\\)\\)\\)\")",
+      "Bash(node -e \"require\\(''./lib/helpers''\\).detectDevServers\\(\\).then\\(servers => console.log\\(JSON.stringify\\(servers, null, 2\\)\\)\\)\")",
+      "Bash(node run.js /tmp/playwright-test-public-reviews.js)",
+      "Bash(find C:UsersEl_GuProjectsTommyboyDesigns-V2/components -name *product* -o -name *upload*)",
+      "Bash(xargs grep:*)",
+      "Bash(grep -r \"CLOUDINARY\\\\|cloudinary\\\\|UPLOAD_PRESET\" C:UsersEl_GuProjectsTommyboyDesigns-V2 --include=.env* --include=*.ts --include=*.tsx --include=*.js)",
+      "Bash(supabase db:*)",
+      "mcp__plugin_context-mode_context-mode__ctx_batch_execute",
+      "Bash(npm install *)",
+      "mcp__plugin_context-mode_context-mode__ctx_execute"
     ]
   }
 }
