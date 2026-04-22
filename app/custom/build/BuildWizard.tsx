@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { addToCart, createCart } from '@/lib/shopify'
+import { useCart } from '@/components/layout/CartProvider'
 import StepIndicator from '@/components/custom/StepIndicator'
 import WizardNav from '@/components/custom/WizardNav'
 import ShapeStep from './steps/ShapeStep'
@@ -21,6 +23,7 @@ interface BuildWizardProps {
 
 export default function BuildWizard({ distilleries, availableColors }: BuildWizardProps) {
   const router = useRouter()
+  const { cart } = useCart()
   const [step, setStep] = useState(1)
   const [state, setState] = useState<WizardState>(INITIAL_WIZARD_STATE)
   const [submitting, setSubmitting] = useState(false)
@@ -58,12 +61,17 @@ export default function BuildWizard({ distilleries, availableColors }: BuildWiza
         const data = await res.json()
         throw new Error(data.error ?? 'Submission failed')
       }
-      const params = new URLSearchParams({
-        shape: state.shape ?? '',
-        qty: String(state.order.quantity),
-        distillery: state.details.distillery,
-      })
-      router.push(`/custom/build/confirmation?${params.toString()}`)
+      const { inquiryId } = await res.json()
+
+      const cartId = cart?.id ?? (await createCart()).id
+      const updatedCart = await addToCart(
+        cartId,
+        process.env.NEXT_PUBLIC_SHOPIFY_CUSTOM_DEPOSIT_VARIANT_ID!,
+        1,
+        [{ key: '_custom_inquiry_id', value: inquiryId }]
+      )
+
+      window.location.href = updatedCart.checkoutUrl
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
       setSubmitting(false)
