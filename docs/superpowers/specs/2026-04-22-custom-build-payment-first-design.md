@@ -53,7 +53,7 @@ Replace `handleNext` final-step logic:
 3. const updatedCart = await addToCart(
      cartId,
      process.env.NEXT_PUBLIC_SHOPIFY_CUSTOM_DEPOSIT_VARIANT_ID,
-     state.order.quantity,
+     1,  // always 1 — deposit is a flat fee; tag quantity lives in the Supabase inquiry
      [{ key: '_custom_inquiry_id', value: inquiryId }]
    )
 4. window.location.href = updatedCart.checkoutUrl
