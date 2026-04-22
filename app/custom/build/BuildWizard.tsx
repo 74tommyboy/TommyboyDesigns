@@ -61,13 +61,10 @@ export default function BuildWizard({ distilleries, availableColors }: BuildWiza
       }
       const { inquiryId } = await res.json()
 
-      const depositVariantId = process.env.NEXT_PUBLIC_SHOPIFY_CUSTOM_DEPOSIT_VARIANT_ID
-      if (!depositVariantId) throw new Error(`DEBUG: variant ID is ${depositVariantId} — env var missing`)
-
       const cartId = cart?.id ?? (await createCart()).id
       const updatedCart = await addToCart(
         cartId,
-        depositVariantId,
+        'gid://shopify/ProductVariant/43150822277183',
         1,
         [{ key: '_custom_inquiry_id', value: inquiryId }]
       )
