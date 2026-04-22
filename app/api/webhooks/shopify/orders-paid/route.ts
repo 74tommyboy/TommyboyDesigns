@@ -17,6 +17,11 @@ function verifyShopifyWebhook(body: string, hmac: string): boolean {
 }
 
 export async function POST(req: NextRequest) {
+  if (!process.env.SHOPIFY_WEBHOOK_SECRET) {
+    console.error('SHOPIFY_WEBHOOK_SECRET is not set')
+    return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 })
+  }
+
   const body = await req.text()
   const hmac = req.headers.get('x-shopify-hmac-sha256') ?? ''
 
@@ -93,12 +98,17 @@ export async function POST(req: NextRequest) {
 
   const shapeData = SHAPES.find(s => s.id === (inquiry.shape as ShapeId))
 
-  await resend.emails.send({
+  const emailResult = await resend.emails.send({
     from: 'TommyboyDesigns <orders@tommyboydesigns.com>',
     to: OWNER_EMAIL,
     subject: `New Custom Tag Inquiry — ${inquiry.details?.distillery ?? 'Unknown'} (${inquiry.contact?.name ?? ''})`,
     html: buildEmailHtml(state, shapeData, signedUrls),
   })
+
+  if (emailResult.error) {
+    console.error('Resend failed:', emailResult.error)
+    return NextResponse.json({ error: 'Email send failed' }, { status: 500 })
+  }
 
   return NextResponse.json({ ok: true })
 }
