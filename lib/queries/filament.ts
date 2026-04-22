@@ -7,23 +7,16 @@ export type AvailableColor = {
   material: string
 }
 
+const LOW_STOCK_THRESHOLD_G = 50
+
 export async function getAvailableFilamentColors(): Promise<AvailableColor[]> {
-  // Fetch threshold from shared settings table
-  const { data: setting } = await supabase
-    .from('settings')
-    .select('value')
-    .eq('key', 'low_stock_threshold_g')
-    .single()
-
-  const threshold = setting ? (Number(setting.value) || 50) : 50
-
   const { data, error } = await supabase
-    .from('filament_spools')
+    .from('filament_colors')
     .select('id, color_name, color_hex, material')
-    .gt('weight_remaining_g', threshold)
-    .neq('status', 'retired')
+    .eq('archived', false)
+    .gt('remaining_weight', LOW_STOCK_THRESHOLD_G)
     .order('color_name')
 
   if (error) throw error
-  return data ?? []
+  return (data ?? []).map((row) => ({ ...row, id: String(row.id) }))
 }
