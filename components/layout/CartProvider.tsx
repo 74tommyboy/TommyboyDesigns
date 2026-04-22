@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react'
-import { ShopifyCart, createCart, addToCart, removeFromCart } from '@/lib/shopify'
+import { ShopifyCart, createCart, addToCart, removeFromCart, updateCartLine } from '@/lib/shopify'
 
 interface CartContextType {
   cart: ShopifyCart | null
@@ -11,6 +11,7 @@ interface CartContextType {
   closeCart: () => void
   addItem: (variantId: string, quantity: number, attributes?: Array<{ key: string; value: string }>) => Promise<void>
   removeItem: (lineId: string) => Promise<void>
+  updateItem: (lineId: string, quantity: number) => Promise<void>
 }
 
 const CartContext = createContext<CartContextType | null>(null)
@@ -54,6 +55,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [cart])
 
+  const updateItem = useCallback(async (lineId: string, quantity: number) => {
+    if (!cart) return
+    setLoading(true)
+    try {
+      const updated = await updateCartLine(cart.id, lineId, quantity)
+      setCart(updated)
+    } finally {
+      setLoading(false)
+    }
+  }, [cart])
+
   return (
     <CartContext.Provider value={{
       cart,
@@ -63,6 +75,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       closeCart: () => setCartOpen(false),
       addItem,
       removeItem,
+      updateItem,
     }}>
       {children}
     </CartContext.Provider>

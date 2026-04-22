@@ -280,6 +280,36 @@ export async function removeFromCart(cartId: string, lineId: string): Promise<Sh
   return data.cartLinesRemove.cart
 }
 
+export async function updateCartLine(cartId: string, lineId: string, quantity: number): Promise<ShopifyCart> {
+  const data = await shopifyFetch<{ cartLinesUpdate: { cart: ShopifyCart } }>(`
+    mutation CartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+      cartLinesUpdate(cartId: $cartId, lines: $lines) {
+        cart {
+          id checkoutUrl totalQuantity
+          cost { totalAmount { amount currencyCode } }
+          lines(first: 20) {
+            edges {
+              node {
+                id quantity
+                attributes { key value }
+                merchandise {
+                  ... on ProductVariant {
+                    id title
+                    product { title handle }
+                    image { url altText }
+                    price { amount currencyCode }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `, { cartId, lines: [{ id: lineId, quantity }] })
+  return data.cartLinesUpdate.cart
+}
+
 // ─── Helpers ──────────────────────────────────────────────
 export function formatMoney(amount: string, currencyCode = 'USD'): string {
   return new Intl.NumberFormat('en-US', {

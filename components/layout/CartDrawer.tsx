@@ -1,13 +1,13 @@
 'use client'
 
-import { X, ShoppingBag, Trash2, Loader2 } from 'lucide-react'
+import { X, ShoppingBag, Trash2, Loader2, Minus, Plus } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from './CartProvider'
 import { formatMoney } from '@/lib/shopify'
 
 export default function CartDrawer() {
-  const { cart, cartOpen, closeCart, removeItem, loading } = useCart()
+  const { cart, cartOpen, closeCart, removeItem, updateItem, loading } = useCart()
 
   const lines = cart?.lines.edges.map((e) => e.node) ?? []
   const total = cart?.cost.totalAmount
@@ -87,18 +87,28 @@ export default function CartDrawer() {
                     <div className="flex items-center justify-between mt-2">
                       <span className="text-amber-bourbon text-sm font-semibold">
                         {formatMoney(line.merchandise.price.amount, line.merchandise.price.currencyCode)}
-                        {line.quantity > 1 && (
-                          <span className="text-steel text-xs ml-1">× {line.quantity}</span>
-                        )}
                       </span>
-                      <button
-                        onClick={() => removeItem(line.id)}
-                        className="p-1 text-steel hover:text-red-400 transition-colors"
-                        aria-label="Remove item"
-                        disabled={loading}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center border border-white/10 rounded bg-navy-700/50">
+                          <button
+                            onClick={() => line.quantity === 1 ? removeItem(line.id) : updateItem(line.id, line.quantity - 1)}
+                            disabled={loading}
+                            className="px-2 py-1 text-steel hover:text-white disabled:opacity-30 transition-colors"
+                            aria-label="Decrease quantity"
+                          >
+                            {line.quantity === 1 ? <Trash2 className="w-3 h-3" /> : <Minus className="w-3 h-3" />}
+                          </button>
+                          <span className="w-6 text-center text-white text-xs font-medium">{line.quantity}</span>
+                          <button
+                            onClick={() => updateItem(line.id, line.quantity + 1)}
+                            disabled={loading}
+                            className="px-2 py-1 text-steel hover:text-white disabled:opacity-30 transition-colors"
+                            aria-label="Increase quantity"
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </li>
