@@ -1,4 +1,4 @@
-import { WizardState, SHAPES, ShapeId } from '@/lib/custom-inquiry-types'
+import { WizardState, SHAPES } from '@/lib/custom-inquiry-types'
 
 export function buildEmailHtml(
   state: WizardState,
