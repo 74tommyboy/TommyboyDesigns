@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { addToCart, createCart } from '@/lib/shopify'
 import { useCart } from '@/components/layout/CartProvider'
 import StepIndicator from '@/components/custom/StepIndicator'
@@ -22,7 +21,6 @@ interface BuildWizardProps {
 }
 
 export default function BuildWizard({ distilleries, availableColors }: BuildWizardProps) {
-  const router = useRouter()
   const { cart } = useCart()
   const [step, setStep] = useState(1)
   const [state, setState] = useState<WizardState>(INITIAL_WIZARD_STATE)
