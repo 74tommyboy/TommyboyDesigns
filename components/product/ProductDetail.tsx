@@ -155,10 +155,16 @@ export default function ProductDetail({ product }: Props) {
                   const isActive = selectedVariant?.selectedOptions.some(
                     (o) => o.name === optionName && o.value === value
                   )
-                  const variantForValue = variants.find((v) =>
-                    v.selectedOptions.some((o) => o.name === optionName && o.value === value)
+                  const currentOptions = selectedVariant?.selectedOptions ?? []
+                  const hypotheticalOptions = currentOptions.map((o) =>
+                    o.name === optionName ? { ...o, value } : o
                   )
-                  const available = variantForValue?.availableForSale
+                  const matchingVariant = variants.find((v) =>
+                    v.selectedOptions.every((o) =>
+                      hypotheticalOptions.some((ho) => ho.name === o.name && ho.value === o.value)
+                    )
+                  )
+                  const available = matchingVariant?.availableForSale ?? false
 
                   return (
                     <button
