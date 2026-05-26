@@ -14,7 +14,7 @@ import { AvailableColor } from '@/lib/queries/filament'
 
 const STEP_LABELS = ['Shape', 'Colors', 'Uploads', 'Order']
 const TOTAL_STEPS = 4
-const COASTER_VARIANT_ID = process.env.NEXT_PUBLIC_SHOPIFY_COASTER_DEPOSIT_VARIANT_ID!
+const COASTER_VARIANT_ID = 'gid://shopify/ProductVariant/43290011566143'
 
 interface CoasterWizardProps {
   availableColors: AvailableColor[]

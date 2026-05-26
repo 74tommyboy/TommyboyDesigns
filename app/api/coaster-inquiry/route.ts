@@ -26,6 +26,12 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  const VALID_SHAPES = ['round', 'square', 'other'] as const
+  type ValidShape = typeof VALID_SHAPES[number]
+  if (!VALID_SHAPES.includes(shape as ValidShape)) {
+    return NextResponse.json({ error: 'Invalid shape' }, { status: 400 })
+  }
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(order.email)) {
     return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
@@ -63,12 +69,15 @@ export async function POST(req: NextRequest) {
 
   const html = buildCoasterEmailHtml(body, signedUrls)
 
-  await resend.emails.send({
+  const { error: emailError } = await resend.emails.send({
     from: 'orders@tommyboydesigns.com',
     to: process.env.OWNER_EMAIL!,
     subject: `New Coaster Inquiry — ${order.name}`,
     html,
   })
+  if (emailError) {
+    console.error('Resend email failed:', emailError)
+  }
 
   return NextResponse.json({ ok: true, inquiryId: inserted.id })
 }
