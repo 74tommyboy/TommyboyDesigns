@@ -4,6 +4,8 @@ import { Resend } from 'resend'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { WizardState, SHAPES, ShapeId } from '@/lib/custom-inquiry-types'
 import { buildEmailHtml } from '@/lib/custom-inquiry-email'
+import { CoasterWizardState, CoasterShapeId } from '@/lib/coaster-inquiry-types'
+import { buildCoasterEmailHtml } from '@/lib/coaster-inquiry-email'
 
 export const dynamic = 'force-dynamic'
 
@@ -70,39 +72,63 @@ export async function POST(req: NextRequest) {
     if (data?.signedUrl) signedUrls.push(data.signedUrl)
   }
 
-  // Reconstruct WizardState from stored inquiry data
-  const state: WizardState = {
-    shape: inquiry.shape,
-    otherShapeDescription: inquiry.details?.otherShapeDescription ?? '',
-    colors: inquiry.colors ?? [],
-    details: {
-      distillery: inquiry.details?.distillery ?? '',
-      year: inquiry.details?.year ?? '',
-      batchType: inquiry.details?.batchType ?? 'batch',
-      batchValue: inquiry.details?.batchValue ?? '',
-      additionalLines: inquiry.details?.additionalLines ?? [],
-    },
-    uploads: (inquiry.uploads ?? []).map((path: string) => ({
-      path,
-      name: path.split('/').pop() ?? '',
-    })),
-    order: {
-      attachment: inquiry.attachment ?? 'hemp_twine',
-      quantity: inquiry.quantity ?? 1,
-      name: inquiry.contact?.name ?? '',
-      email: inquiry.contact?.email ?? '',
-      phone: inquiry.contact?.phone ?? '',
-      notes: inquiry.notes ?? '',
-    },
-  }
+  let emailHtml: string
+  let subject: string
 
-  const shapeData = SHAPES.find(s => s.id === (inquiry.shape as ShapeId))
+  if (inquiry.product_type === 'coaster') {
+    const coasterState: CoasterWizardState = {
+      shape: (inquiry.shape as CoasterShapeId) ?? null,
+      otherShapeDescription: inquiry.details?.otherShapeDescription ?? '',
+      colors: inquiry.colors ?? [],
+      uploads: (inquiry.uploads ?? []).map((path: string) => ({
+        path,
+        name: path.split('/').pop() ?? '',
+      })),
+      order: {
+        quantity: inquiry.quantity ?? 1,
+        name: inquiry.contact?.name ?? '',
+        email: inquiry.contact?.email ?? '',
+        phone: inquiry.contact?.phone ?? '',
+        notes: inquiry.notes ?? '',
+      },
+    }
+    emailHtml = buildCoasterEmailHtml(coasterState, signedUrls)
+    subject = `New Coaster Inquiry — ${inquiry.contact?.name ?? ''}`
+  } else {
+    const tagState: WizardState = {
+      shape: inquiry.shape,
+      otherShapeDescription: inquiry.details?.otherShapeDescription ?? '',
+      colors: inquiry.colors ?? [],
+      details: {
+        distillery: inquiry.details?.distillery ?? '',
+        year: inquiry.details?.year ?? '',
+        batchType: inquiry.details?.batchType ?? 'batch',
+        batchValue: inquiry.details?.batchValue ?? '',
+        additionalLines: inquiry.details?.additionalLines ?? [],
+      },
+      uploads: (inquiry.uploads ?? []).map((path: string) => ({
+        path,
+        name: path.split('/').pop() ?? '',
+      })),
+      order: {
+        attachment: inquiry.attachment ?? 'hemp_twine',
+        quantity: inquiry.quantity ?? 1,
+        name: inquiry.contact?.name ?? '',
+        email: inquiry.contact?.email ?? '',
+        phone: inquiry.contact?.phone ?? '',
+        notes: inquiry.notes ?? '',
+      },
+    }
+    const shapeData = SHAPES.find(s => s.id === (inquiry.shape as ShapeId))
+    emailHtml = buildEmailHtml(tagState, shapeData, signedUrls)
+    subject = `New Custom Tag Inquiry — ${inquiry.details?.distillery ?? 'Unknown'} (${inquiry.contact?.name ?? ''})`
+  }
 
   const emailResult = await resend.emails.send({
     from: 'TommyboyDesigns <orders@tommyboydesigns.com>',
     to: OWNER_EMAIL,
-    subject: `New Custom Tag Inquiry — ${inquiry.details?.distillery ?? 'Unknown'} (${inquiry.contact?.name ?? ''})`,
-    html: buildEmailHtml(state, shapeData, signedUrls),
+    subject,
+    html: emailHtml,
   })
 
   if (emailResult.error) {

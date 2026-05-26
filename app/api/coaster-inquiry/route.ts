@@ -1,13 +1,8 @@
-// app/api/coaster-inquiry/route.ts
 import { NextRequest, NextResponse } from 'next/server'
-import { Resend } from 'resend'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { CoasterWizardState } from '@/lib/coaster-inquiry-types'
-import { buildCoasterEmailHtml } from '@/lib/coaster-inquiry-email'
 
 export const dynamic = 'force-dynamic'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(req: NextRequest) {
   let body: CoasterWizardState
@@ -55,27 +50,6 @@ export async function POST(req: NextRequest) {
   if (dbError || !inserted) {
     console.error('Supabase insert failed:', dbError)
     return NextResponse.json({ error: 'Failed to save inquiry' }, { status: 500 })
-  }
-
-  // Generate signed URLs for any uploaded files
-  const signedUrls: string[] = []
-  for (const upload of uploads ?? []) {
-    const { data } = await supabaseAdmin.storage
-      .from('custom-inquiry-uploads')
-      .createSignedUrl(upload.path, 60 * 60 * 24 * 7) // 7 days
-    if (data?.signedUrl) signedUrls.push(data.signedUrl)
-  }
-
-  const html = buildCoasterEmailHtml(body, signedUrls)
-
-  const { error: emailError } = await resend.emails.send({
-    from: 'orders@tommyboydesigns.com',
-    to: process.env.OWNER_EMAIL!,
-    subject: `New Coaster Inquiry — ${order.name}`,
-    html,
-  })
-  if (emailError) {
-    console.error('Resend email failed:', emailError)
   }
 
   return NextResponse.json({ ok: true, inquiryId: inserted.id })
