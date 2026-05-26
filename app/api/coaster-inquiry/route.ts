@@ -40,13 +40,12 @@ export async function POST(req: NextRequest) {
   const { data: inserted, error: dbError } = await supabaseAdmin
     .from('custom_inquiries')
     .insert({
-      product_type: 'coaster',
       shape,
       colors: colors ?? [],
       details: { otherShapeDescription: otherShapeDescription ?? '' },
       uploads: (uploads ?? []).map(u => u.path),
       quantity: order.quantity,
-      attachment: null,
+      attachment: 'hemp_twine',
       contact: { name: order.name, email: order.email, phone: order.phone },
       notes: order.notes ?? '',
     })
