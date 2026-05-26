@@ -8,6 +8,7 @@ import { UploadedFile } from '@/lib/custom-inquiry-types'
 const ACCEPTED = '.png,.jpg,.jpeg,.pdf,.svg,.ai'
 const MAX_MB = 10
 const MAX_FILES = 5
+const IMAGE_EXTS = /\.(jpe?g|png|gif|webp|svg)$/i
 
 interface UploadsStepProps {
   uploads: UploadedFile[]
@@ -23,6 +24,7 @@ interface UploadProgress {
 
 export default function UploadsStep({ uploads, onChange }: UploadsStepProps) {
   const [progresses, setProgresses] = useState<UploadProgress[]>([])
+  const [previews, setPreviews] = useState<Record<string, string>>({})
   const [dragging, setDragging] = useState(false)
   const sessionId = useRef(crypto.randomUUID())
   const inputRef = useRef<HTMLInputElement>(null)
@@ -34,20 +36,29 @@ export default function UploadsStep({ uploads, onChange }: UploadsStepProps) {
       setProgresses(p => [...p, { id, name: file.name, progress: 'error', error: 'File too large (max 10MB)' }])
       return
     }
+    const previewUrl = IMAGE_EXTS.test(file.name) ? URL.createObjectURL(file) : null
     const path = `${sessionId.current}/${Date.now()}-${file.name}`
     setProgresses(p => [...p, { id, name: file.name, progress: 'uploading' }])
     const { error } = await supabase.storage.from('custom-inquiry-uploads').upload(path, file)
     if (error) {
+      if (previewUrl) URL.revokeObjectURL(previewUrl)
       setProgresses(p => p.map(x => x.id === id ? { ...x, progress: 'error', error: error.message } : x))
       return
     }
     setProgresses(p => p.filter(x => x.id !== id))
+    if (previewUrl) setPreviews(p => ({ ...p, [path]: previewUrl }))
     onChange([...uploads, { path, name: file.name }])
   }
 
   const handleFiles = (files: FileList) => Array.from(files).forEach(uploadFile)
 
-  const removeUpload = (path: string) => onChange(uploads.filter(u => u.path !== path))
+  const removeUpload = (path: string) => {
+    if (previews[path]) {
+      URL.revokeObjectURL(previews[path])
+      setPreviews(p => { const next = { ...p }; delete next[path]; return next })
+    }
+    onChange(uploads.filter(u => u.path !== path))
+  }
 
   return (
     <div>
@@ -70,12 +81,24 @@ export default function UploadsStep({ uploads, onChange }: UploadsStepProps) {
 
       {(uploads.length > 0 || progresses.length > 0) && (
         <ul className="mt-4 space-y-2">
-          {uploads.map((u) => (
-            <li key={u.path} className="flex items-center justify-between glass-card px-4 py-2.5">
-              <span className="text-sm text-steel-light truncate">{u.name}</span>
-              <button type="button" onClick={() => removeUpload(u.path)} className="text-steel/40 hover:text-red-400 ml-3 cursor-pointer"><X className="w-4 h-4" /></button>
-            </li>
-          ))}
+          {uploads.map((u) => {
+            const preview = previews[u.path]
+            return (
+              <li key={u.path} className="glass-card overflow-hidden">
+                {preview && (
+                  <img
+                    src={preview}
+                    alt={u.name}
+                    className="w-full max-h-48 object-contain bg-navy-900/60 border-b border-white/5"
+                  />
+                )}
+                <div className="flex items-center justify-between px-4 py-2.5">
+                  <span className="text-sm text-steel-light truncate">{u.name}</span>
+                  <button type="button" onClick={() => removeUpload(u.path)} className="text-steel/40 hover:text-red-400 ml-3 cursor-pointer"><X className="w-4 h-4" /></button>
+                </div>
+              </li>
+            )
+          })}
           {progresses.map((p) => (
             <li key={p.id} className="flex items-center gap-3 glass-card px-4 py-2.5">
               {p.progress === 'uploading' && <Loader2 className="w-4 h-4 animate-spin text-amber-bourbon flex-shrink-0" />}
