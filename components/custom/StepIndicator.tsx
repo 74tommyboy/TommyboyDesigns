@@ -2,16 +2,17 @@
 
 import { cn } from '@/lib/utils'
 
-const STEP_LABELS = ['Shape', 'Colors', 'Details', 'Uploads', 'Order']
+const DEFAULT_LABELS = ['Shape', 'Colors', 'Details', 'Uploads', 'Order']
 
 interface StepIndicatorProps {
   currentStep: number  // 1-based
+  labels?: string[]
 }
 
-export default function StepIndicator({ currentStep }: StepIndicatorProps) {
+export default function StepIndicator({ currentStep, labels = DEFAULT_LABELS }: StepIndicatorProps) {
   return (
     <div className="flex items-center w-full mb-10">
-      {STEP_LABELS.map((label, i) => {
+      {labels.map((label, i) => {
         const stepNum = i + 1
         const done = stepNum < currentStep
         const active = stepNum === currentStep
@@ -35,7 +36,7 @@ export default function StepIndicator({ currentStep }: StepIndicatorProps) {
                 {label}
               </span>
             </div>
-            {i < STEP_LABELS.length - 1 && (
+            {i < labels.length - 1 && (
               <div className={cn(
                 'h-px flex-1 mx-2 transition-all',
                 done ? 'bg-amber-bourbon' : 'bg-white/10'
