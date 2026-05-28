@@ -70,6 +70,14 @@ const orgSchema = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const settings = await getSiteSettings()
 
+  const today = new Date().toISOString().slice(0, 10) // YYYY-MM-DD
+  const inVacationWindow =
+    !!settings.vacation_from &&
+    !!settings.vacation_to &&
+    today >= settings.vacation_from &&
+    today <= settings.vacation_to
+  const isVacationMode = settings.vacation_mode || inVacationWindow
+
   const announcementActive =
     settings.announcement_enabled &&
     !!settings.announcement_text &&
@@ -84,7 +92,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
         />
         <CartProvider
-          vacationMode={settings.vacation_mode}
+          vacationMode={isVacationMode}
           vacationMessage={settings.vacation_message}
         >
           <Header />

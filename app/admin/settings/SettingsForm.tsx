@@ -2,7 +2,9 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { parseISO } from 'date-fns'
 import type { SiteSettings } from '@/lib/site-settings'
+import DatePickerInput from '@/components/ui/DatePickerInput'
 
 function Toggle({
   checked,
@@ -36,13 +38,7 @@ function Toggle({
   )
 }
 
-function Field({
-  label,
-  children,
-}: {
-  label: string
-  children: React.ReactNode
-}) {
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-1.5">
       <label className="block text-steel text-xs uppercase tracking-widest">{label}</label>
@@ -91,6 +87,8 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
     router.push('/admin/login')
   }
 
+  const hasVacationDates = !!settings.vacation_from || !!settings.vacation_to
+
   return (
     <form onSubmit={handleSave} className="space-y-8">
       {/* Vacation Mode */}
@@ -107,7 +105,33 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
           />
         </div>
 
-        {settings.vacation_mode && (
+        <div className="space-y-2">
+          <p className="text-steel text-xs uppercase tracking-widest">Scheduled Dates</p>
+          <p className="text-steel/50 text-xs">
+            Optional — vacation mode auto-activates within this window even if the toggle above is off.
+          </p>
+          <div className="grid grid-cols-2 gap-4 pt-1">
+            <Field label="From">
+              <DatePickerInput
+                value={settings.vacation_from}
+                onChange={(v) => set('vacation_from', v)}
+                placeholder="Start date"
+              />
+            </Field>
+            <Field label="To">
+              <DatePickerInput
+                value={settings.vacation_to}
+                onChange={(v) => set('vacation_to', v)}
+                placeholder="End date"
+                fromDate={
+                  settings.vacation_from ? parseISO(settings.vacation_from) : undefined
+                }
+              />
+            </Field>
+          </div>
+        </div>
+
+        {(settings.vacation_mode || hasVacationDates) && (
           <Field label="Vacation Message">
             <textarea
               value={settings.vacation_message ?? ''}
@@ -167,21 +191,13 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
               </Field>
             </div>
 
-            <Field label="Expires At (optional — leave blank to show indefinitely)">
-              <input
-                type="datetime-local"
-                value={
-                  settings.announcement_expires_at
-                    ? settings.announcement_expires_at.slice(0, 16)
-                    : ''
+            <Field label="Expires On (optional — leave blank to show indefinitely)">
+              <DatePickerInput
+                value={settings.announcement_expires_at?.slice(0, 10) ?? null}
+                onChange={(v) =>
+                  set('announcement_expires_at', v ? `${v}T23:59:59.000Z` : null)
                 }
-                onChange={(e) =>
-                  set(
-                    'announcement_expires_at',
-                    e.target.value ? new Date(e.target.value).toISOString() : null
-                  )
-                }
-                className={inputCls}
+                placeholder="No expiry"
               />
             </Field>
           </div>
@@ -190,21 +206,13 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
 
       {/* Actions */}
       <div className="flex items-center justify-between">
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="btn-outline text-sm"
-        >
+        <button type="button" onClick={handleLogout} className="btn-outline text-sm">
           Sign Out
         </button>
         <div className="flex items-center gap-4">
           {saved && <span className="text-green-400 text-sm">Saved!</span>}
           {error && <span className="text-red-400 text-sm">{error}</span>}
-          <button
-            type="submit"
-            disabled={saving}
-            className="btn-primary disabled:opacity-50"
-          >
+          <button type="submit" disabled={saving} className="btn-primary disabled:opacity-50">
             {saving ? 'Saving...' : 'Save Changes'}
           </button>
         </div>

@@ -5,6 +5,8 @@ import { supabaseAdmin } from './supabase-admin'
 export interface SiteSettings {
   vacation_mode: boolean
   vacation_message: string | null
+  vacation_from: string | null // YYYY-MM-DD
+  vacation_to: string | null   // YYYY-MM-DD
   announcement_enabled: boolean
   announcement_text: string | null
   announcement_cta_label: string | null
@@ -15,6 +17,8 @@ export interface SiteSettings {
 const defaultSettings: SiteSettings = {
   vacation_mode: false,
   vacation_message: null,
+  vacation_from: null,
+  vacation_to: null,
   announcement_enabled: false,
   announcement_text: null,
   announcement_cta_label: null,
@@ -26,7 +30,7 @@ export const getSiteSettings = unstable_cache(
   async (): Promise<SiteSettings> => {
     const { data, error } = await supabaseAdmin
       .from('site_settings')
-      .select('vacation_mode,vacation_message,announcement_enabled,announcement_text,announcement_cta_label,announcement_cta_url,announcement_expires_at')
+      .select('vacation_mode,vacation_message,vacation_from,vacation_to,announcement_enabled,announcement_text,announcement_cta_label,announcement_cta_url,announcement_expires_at')
       .eq('id', 1)
       .single()
 
