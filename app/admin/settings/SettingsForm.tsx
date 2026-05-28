@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { parseISO } from 'date-fns'
 import type { SiteSettings } from '@/lib/site-settings'
@@ -57,6 +57,11 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
   const [error, setError] = useState('')
   const router = useRouter()
 
+  // Sync form state when the server re-fetches fresh data after router.refresh()
+  useEffect(() => {
+    setSettings(initial)
+  }, [initial])
+
   function set<K extends keyof SiteSettings>(key: K, value: SiteSettings[K]) {
     setSettings((prev) => ({ ...prev, [key]: value }))
     setSaved(false)
@@ -75,6 +80,7 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
 
     if (res.ok) {
       setSaved(true)
+      router.refresh()
     } else {
       const data = await res.json()
       setError(data.error ?? 'Failed to save')
