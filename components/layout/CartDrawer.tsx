@@ -7,7 +7,7 @@ import { useCart } from './CartProvider'
 import { formatMoney } from '@/lib/shopify'
 
 export default function CartDrawer() {
-  const { cart, cartOpen, closeCart, removeItem, updateItem, loading } = useCart()
+  const { cart, cartOpen, closeCart, removeItem, updateItem, loading, vacationMode, vacationMessage } = useCart()
 
   const lines = cart?.lines.edges.map((e) => e.node) ?? []
   const total = cart?.cost.totalAmount
@@ -126,16 +126,25 @@ export default function CartDrawer() {
                 {formatMoney(total.amount, total.currencyCode)}
               </span>
             </div>
-            <a
-              href={cart?.checkoutUrl}
-              className="btn-primary w-full justify-center"
-            >
-              {loading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                'Proceed to Checkout'
-              )}
-            </a>
+            {vacationMode ? (
+              <div className="rounded border border-amber-bourbon/30 bg-amber-bourbon/10 p-4 text-center space-y-1">
+                <p className="font-display text-amber-bourbon tracking-wider text-sm">ON VACATION</p>
+                <p className="text-steel text-xs leading-relaxed">
+                  {vacationMessage ?? 'Checkout is temporarily unavailable. Please check back soon!'}
+                </p>
+              </div>
+            ) : (
+              <a
+                href={cart?.checkoutUrl}
+                className="btn-primary w-full justify-center"
+              >
+                {loading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  'Proceed to Checkout'
+                )}
+              </a>
+            )}
             <p className="text-center text-steel/50 text-xs">
               Taxes and shipping calculated at checkout
             </p>

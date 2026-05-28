@@ -7,6 +7,8 @@ interface CartContextType {
   cart: ShopifyCart | null
   cartOpen: boolean
   loading: boolean
+  vacationMode: boolean
+  vacationMessage: string | null
   openCart: () => void
   closeCart: () => void
   addItem: (variantId: string, quantity: number, attributes?: Array<{ key: string; value: string }>) => Promise<void>
@@ -16,7 +18,15 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | null>(null)
 
-export function CartProvider({ children }: { children: ReactNode }) {
+export function CartProvider({
+  children,
+  vacationMode = false,
+  vacationMessage = null,
+}: {
+  children: ReactNode
+  vacationMode?: boolean
+  vacationMessage?: string | null
+}) {
   const [cart, setCart] = useState<ShopifyCart | null>(null)
   const [cartOpen, setCartOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -71,6 +81,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       cart,
       cartOpen,
       loading,
+      vacationMode,
+      vacationMessage,
       openCart: () => setCartOpen(true),
       closeCart: () => setCartOpen(false),
       addItem,

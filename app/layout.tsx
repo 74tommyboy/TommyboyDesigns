@@ -6,6 +6,8 @@ import Footer from '@/components/layout/Footer'
 import { CartProvider } from '@/components/layout/CartProvider'
 import ReviewPopup from '@/components/ui/ReviewPopup'
 import ChatWidget from '@/components/ui/ChatWidget'
+import AnnouncementPopup from '@/components/layout/AnnouncementPopup'
+import { getSiteSettings } from '@/lib/site-settings'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.tommyboydesigns.com'),
@@ -65,7 +67,14 @@ const orgSchema = {
   },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const settings = await getSiteSettings()
+
+  const announcementActive =
+    settings.announcement_enabled &&
+    !!settings.announcement_text &&
+    (!settings.announcement_expires_at || new Date(settings.announcement_expires_at) > new Date())
+
   return (
     <html lang="en">
       <body>
@@ -74,12 +83,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
         />
-        <CartProvider>
+        <CartProvider
+          vacationMode={settings.vacation_mode}
+          vacationMessage={settings.vacation_message}
+        >
           <Header />
           <main className="min-h-dvh">{children}</main>
           <Footer />
           <ReviewPopup />
           <ChatWidget />
+          {announcementActive && (
+            <AnnouncementPopup
+              text={settings.announcement_text!}
+              ctaLabel={settings.announcement_cta_label}
+              ctaUrl={settings.announcement_cta_url}
+            />
+          )}
         </CartProvider>
       </body>
     </html>
