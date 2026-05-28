@@ -50,7 +50,13 @@ export default function ProductDetail({ product }: Props) {
         newOptions.find((no) => no.name === o.name && no.value === o.value)
       )
     )
-    if (match) setSelectedVariant(match)
+    if (match) {
+      setSelectedVariant(match)
+      if (match.image) {
+        const idx = images.findIndex((img) => img.url === match.image!.url)
+        if (idx !== -1) setActiveImage(idx)
+      }
+    }
   }
 
   return (

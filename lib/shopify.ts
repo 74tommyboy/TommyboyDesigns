@@ -50,6 +50,7 @@ export interface ShopifyVariant {
   price: { amount: string; currencyCode: string }
   compareAtPrice: { amount: string; currencyCode: string } | null
   selectedOptions: Array<{ name: string; value: string }>
+  image: { url: string; altText: string | null } | null
 }
 
 export interface ShopifyCollection {
@@ -111,6 +112,7 @@ const PRODUCT_FRAGMENT = `
         price { amount currencyCode }
         compareAtPrice { amount currencyCode }
         selectedOptions { name value }
+        image { url altText }
       }
     }
   }

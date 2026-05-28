@@ -7,10 +7,19 @@ import { getProducts, formatMoney } from '@/lib/shopify'
 export const metadata: Metadata = {
   title: 'Shop Bourbon Neck Tags | BTAC, Pappy Van Winkle & Custom Designs',
   description: 'Browse all 3D-printed bourbon bottle neck tags. BTAC collection, Pappy Van Winkle series, custom orders, and barware accessories. Starting at $7.49. Veteran-owned.',
+  alternates: {
+    canonical: 'https://www.tommyboydesigns.com/shop',
+  },
   openGraph: {
     title: 'Shop Bourbon Collector Neck Tags | TommyboyDesigns',
     description: 'All 3D-printed bourbon bottle neck tags — BTAC, Pappy Van Winkle, custom designs and barware.',
     images: [{ url: '/hero-og.webp', width: 1200, height: 630, alt: 'TommyboyDesigns bourbon neck tags collection' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Shop Bourbon Collector Neck Tags | TommyboyDesigns',
+    description: 'All 3D-printed bourbon bottle neck tags — BTAC, Pappy Van Winkle, custom designs and barware. Starting at $7.49.',
+    images: ['/hero-og.webp'],
   },
 }
 export const revalidate = 60

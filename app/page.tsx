@@ -12,6 +12,9 @@ export const revalidate = 60
 export const metadata: Metadata = {
   title: 'Bourbon Collector Neck Tags | 3D-Printed BTAC & Pappy Van Winkle Tags',
   description: 'Shop precision-crafted 3D-printed bourbon bottle neck tags. BTAC, Pappy Van Winkle, and fully custom designs for serious collectors. Starting at $7.49. Veteran-owned.',
+  alternates: {
+    canonical: 'https://www.tommyboydesigns.com',
+  },
   openGraph: {
     title: 'Bourbon Collector Neck Tags | TommyboyDesigns',
     description: 'Precision-crafted 3D-printed bourbon bottle neck tags for serious collectors. BTAC, Pappy Van Winkle, and custom designs.',

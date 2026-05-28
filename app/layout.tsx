@@ -67,6 +67,13 @@ const orgSchema = {
   },
 }
 
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'TommyboyDesigns',
+  url: 'https://www.tommyboydesigns.com',
+}
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const settings = await getSiteSettings()
 
@@ -90,6 +97,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           id="org-schema"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        />
+        <Script
+          id="website-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
         <CartProvider
           vacationMode={isVacationMode}
