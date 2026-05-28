@@ -4,34 +4,11 @@ import { createClient } from '@supabase/supabase-js'
 
 export const dynamic = 'force-dynamic'
 
-const REVIEW_DELAY_DAYS = 2 // days after delivery before sending review email
-
 function getSupabase() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
-}
-
-async function checkDelivered(trackingNumbers: string[]): Promise<boolean> {
-  if (!trackingNumbers || trackingNumbers.length === 0) return false
-
-  const apiKey = process.env.EASYPOST_API_KEY!
-  const credentials = Buffer.from(`${apiKey}:`).toString('base64')
-
-  for (const number of trackingNumbers) {
-    try {
-      const res = await fetch(`https://api.easypost.com/v2/trackers?tracking_code=${number}`, {
-        headers: { Authorization: `Basic ${credentials}` },
-      })
-      const data = await res.json()
-      const tracker = data.trackers?.[0]
-      if (tracker?.status === 'delivered') return true
-    } catch {
-      // continue checking other numbers
-    }
-  }
-  return false
 }
 
 export async function GET(req: NextRequest) {
@@ -43,37 +20,19 @@ export async function GET(req: NextRequest) {
   const supabase = getSupabase()
   const resend = new Resend(process.env.RESEND_API_KEY)
 
-  // Fetch all pending orders not yet marked delivered
+  // Fetch orders whose send window has passed and haven't been emailed yet
   const { data: pending, error } = await supabase
     .from('pending_review_emails')
     .select('*')
     .eq('sent', false)
+    .lte('send_after', new Date().toISOString())
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   if (!pending || pending.length === 0) return NextResponse.json({ sent: 0 })
 
   let sent = 0
-  const now = new Date()
 
   for (const row of pending) {
-    // If not yet confirmed delivered, check tracking
-    if (!row.delivered) {
-      const delivered = await checkDelivered(row.tracking_numbers ?? [])
-      if (delivered) {
-        const sendAfter = new Date()
-        sendAfter.setDate(sendAfter.getDate() + REVIEW_DELAY_DAYS)
-        await supabase
-          .from('pending_review_emails')
-          .update({ delivered: true, send_after: sendAfter.toISOString() })
-          .eq('id', row.id)
-      }
-      continue
-    }
-
-    // If delivered but not yet time to send, skip
-    if (!row.send_after || new Date(row.send_after) > now) continue
-
-    // Send review email
     const reviewUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/reviews/${row.token}?order=${row.order_id}&email=${encodeURIComponent(row.email)}`
 
     const { error: sendError } = await resend.emails.send({
