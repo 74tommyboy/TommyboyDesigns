@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { ShopifyProduct, ShopifyVariant, formatMoney, isCustomProduct } from '@/lib/shopify'
 import AddToCart from './AddToCart'
+import BatchAddToCart from './BatchAddToCart'
 import ArtworkUpload from './ArtworkUpload'
 
 interface Props {
@@ -39,6 +40,11 @@ export default function ProductDetail({ product }: Props) {
       if (!optionMap[o.name].includes(o.value)) optionMap[o.name].push(o.value)
     })
   })
+
+  // Use batch grid UI when there's a single option with 4+ values (e.g. Batch 1–10)
+  const optionNames = Object.keys(optionMap)
+  const isBatchMode = optionNames.length === 1 && optionMap[optionNames[0]].length >= 4
+  const batchOptionName = isBatchMode ? optionNames[0] : null
 
   const handleOptionChange = (optionName: string, value: string) => {
     const currentOptions = selectedVariant?.selectedOptions ?? []
@@ -149,8 +155,8 @@ export default function ProductDetail({ product }: Props) {
           )}
         </div>
 
-        {/* Variant selectors */}
-        {Object.entries(optionMap).map(([optionName, values]) =>
+        {/* Variant selectors — standard pill buttons (non-batch products) */}
+        {!isBatchMode && Object.entries(optionMap).map(([optionName, values]) =>
           values.length > 1 ? (
             <div key={optionName} className="space-y-2">
               <label className="text-sm font-medium text-steel-light block">
@@ -224,12 +230,22 @@ export default function ProductDetail({ product }: Props) {
         )}
 
         {/* Add to cart */}
-        <AddToCart
-          product={product}
-          selectedVariant={selectedVariant}
-          artworkUrl={artworkUrl}
-          customerNote={note}
-        />
+        {isBatchMode && batchOptionName ? (
+          <BatchAddToCart
+            product={product}
+            variants={variants}
+            optionName={batchOptionName}
+            artworkUrl={artworkUrl}
+            customerNote={note}
+          />
+        ) : (
+          <AddToCart
+            product={product}
+            selectedVariant={selectedVariant}
+            artworkUrl={artworkUrl}
+            customerNote={note}
+          />
+        )}
 
         {/* Tags */}
         {product.tags.length > 0 && (

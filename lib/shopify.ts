@@ -252,6 +252,42 @@ export async function addToCart(cartId: string, variantId: string, quantity: num
   return data.cartLinesAdd.cart
 }
 
+export async function addMultipleToCart(
+  cartId: string,
+  lines: Array<{ variantId: string; quantity: number; attributes?: Array<{ key: string; value: string }> }>
+): Promise<ShopifyCart> {
+  const data = await shopifyFetch<{ cartLinesAdd: { cart: ShopifyCart } }>(`
+    mutation CartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
+      cartLinesAdd(cartId: $cartId, lines: $lines) {
+        cart {
+          id checkoutUrl totalQuantity
+          cost { totalAmount { amount currencyCode } }
+          lines(first: 20) {
+            edges {
+              node {
+                id quantity
+                attributes { key value }
+                merchandise {
+                  ... on ProductVariant {
+                    id title
+                    product { title handle }
+                    image { url altText }
+                    price { amount currencyCode }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `, {
+    cartId,
+    lines: lines.map(l => ({ merchandiseId: l.variantId, quantity: l.quantity, attributes: l.attributes ?? [] })),
+  })
+  return data.cartLinesAdd.cart
+}
+
 export async function removeFromCart(cartId: string, lineId: string): Promise<ShopifyCart> {
   const data = await shopifyFetch<{ cartLinesRemove: { cart: ShopifyCart } }>(`
     mutation CartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {

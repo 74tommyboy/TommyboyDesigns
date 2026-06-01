@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react'
-import { ShopifyCart, createCart, addToCart, removeFromCart, updateCartLine } from '@/lib/shopify'
+import { ShopifyCart, createCart, addToCart, addMultipleToCart, removeFromCart, updateCartLine } from '@/lib/shopify'
 
 interface CartContextType {
   cart: ShopifyCart | null
@@ -12,6 +12,7 @@ interface CartContextType {
   openCart: () => void
   closeCart: () => void
   addItem: (variantId: string, quantity: number, attributes?: Array<{ key: string; value: string }>) => Promise<void>
+  addItems: (items: Array<{ variantId: string; quantity: number; attributes?: Array<{ key: string; value: string }> }>) => Promise<void>
   removeItem: (lineId: string) => Promise<void>
   updateItem: (lineId: string, quantity: number) => Promise<void>
 }
@@ -54,6 +55,20 @@ export function CartProvider({
     }
   }, [getOrCreateCart])
 
+  const addItems = useCallback(async (
+    items: Array<{ variantId: string; quantity: number; attributes?: Array<{ key: string; value: string }> }>
+  ) => {
+    setLoading(true)
+    try {
+      const cartId = await getOrCreateCart()
+      const updated = await addMultipleToCart(cartId, items)
+      setCart(updated)
+      setCartOpen(true)
+    } finally {
+      setLoading(false)
+    }
+  }, [getOrCreateCart])
+
   const removeItem = useCallback(async (lineId: string) => {
     if (!cart) return
     setLoading(true)
@@ -86,6 +101,7 @@ export function CartProvider({
       openCart: () => setCartOpen(true),
       closeCart: () => setCartOpen(false),
       addItem,
+      addItems,
       removeItem,
       updateItem,
     }}>
