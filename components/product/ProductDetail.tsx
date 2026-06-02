@@ -41,10 +41,13 @@ export default function ProductDetail({ product }: Props) {
     })
   })
 
-  // Use batch grid UI when there's a single option with 4+ values (e.g. Batch 1–10)
-  const optionNames = Object.keys(optionMap)
-  const isBatchMode = optionNames.length === 1 && optionMap[optionNames[0]].length >= 4
-  const batchOptionName = isBatchMode ? optionNames[0] : null
+  // Use batch grid UI when any single option has 4+ values (e.g. Batch #)
+  // That option becomes the grid axis; other options keep standard selectors
+  const batchOptionEntry = Object.entries(optionMap)
+    .filter(([, values]) => values.length >= 4)
+    .sort((a, b) => b[1].length - a[1].length)[0]
+  const batchOptionName = batchOptionEntry?.[0] ?? null
+  const isBatchMode = batchOptionName !== null
 
   const handleOptionChange = (optionName: string, value: string) => {
     const currentOptions = selectedVariant?.selectedOptions ?? []
@@ -155,9 +158,9 @@ export default function ProductDetail({ product }: Props) {
           )}
         </div>
 
-        {/* Variant selectors — standard pill buttons (non-batch products) */}
-        {!isBatchMode && Object.entries(optionMap).map(([optionName, values]) =>
-          values.length > 1 ? (
+        {/* Variant selectors — standard pill buttons (skip the batch axis option) */}
+        {Object.entries(optionMap).map(([optionName, values]) =>
+          values.length > 1 && optionName !== batchOptionName ? (
             <div key={optionName} className="space-y-2">
               <label className="text-sm font-medium text-steel-light block">
                 {optionName}: <span className="text-white">{selectedVariant?.selectedOptions.find((o) => o.name === optionName)?.value}</span>
@@ -235,6 +238,7 @@ export default function ProductDetail({ product }: Props) {
             product={product}
             variants={variants}
             optionName={batchOptionName}
+            selectedVariant={selectedVariant}
             artworkUrl={artworkUrl}
             customerNote={note}
           />
