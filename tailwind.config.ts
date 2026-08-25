@@ -52,6 +52,8 @@ const config: Config = {
         'pulse-amber': 'pulseAmber 2s ease-in-out infinite',
         'march': 'march 20s linear infinite',
         'slide-up': 'slideUp 0.4s ease-out forwards',
+        'nudge-pulse': 'nudgePulse 0.5s ease-in-out 2',
+        'tooltip-flash': 'tooltipFlash 2.4s ease-in-out forwards',
       },
       keyframes: {
         fadeUp: {
@@ -73,6 +75,16 @@ const config: Config = {
         slideUp: {
           '0%': { opacity: '0', transform: 'translateY(16px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        nudgePulse: {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.2)' },
+        },
+        tooltipFlash: {
+          '0%': { opacity: '0', transform: 'translateY(4px)' },
+          '15%': { opacity: '1', transform: 'translateY(0)' },
+          '75%': { opacity: '1', transform: 'translateY(0)' },
+          '100%': { opacity: '0', transform: 'translateY(0)' },
         },
       },
       boxShadow: {

@@ -19,6 +19,9 @@ export default function BatchAddToCart({ product, variants, optionName, selected
   const [quantities, setQuantities] = useState<Record<string, number>>({})
   const [notes, setNotes] = useState<Record<string, string>>({})
   const [openNoteFor, setOpenNoteFor] = useState<string | null>(null)
+  // One-time nudge (pulse + tooltip) pointing at the note button the first time a row is selected
+  const [nudgedRows, setNudgedRows] = useState<Set<string>>(new Set())
+  const [activeNudge, setActiveNudge] = useState<string | null>(null)
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle')
   const isCustom = isCustomProduct(product)
 
@@ -39,19 +42,33 @@ export default function BatchAddToCart({ product, variants, optionName, selected
   }
 
   const setQty = (batchValue: string, delta: number) => {
+    const current = quantities[batchValue] ?? 0
+    const next = Math.max(0, current + delta)
+
     setQuantities(prev => {
-      const next = Math.max(0, (prev[batchValue] ?? 0) + delta)
       if (next === 0) {
         const { [batchValue]: _, ...rest } = prev
-        setNotes(n => {
-          const { [batchValue]: __, ...restNotes } = n
-          return restNotes
-        })
-        setOpenNoteFor(open => (open === batchValue ? null : open))
         return rest
       }
       return { ...prev, [batchValue]: next }
     })
+
+    if (next === 0) {
+      setNotes(n => {
+        const { [batchValue]: __, ...restNotes } = n
+        return restNotes
+      })
+      setOpenNoteFor(open => (open === batchValue ? null : open))
+      return
+    }
+
+    if (current === 0 && !nudgedRows.has(batchValue)) {
+      setNudgedRows(prev => new Set(prev).add(batchValue))
+      setActiveNudge(batchValue)
+      window.setTimeout(() => {
+        setActiveNudge(v => (v === batchValue ? null : v))
+      }, 2400)
+    }
   }
 
   const setNoteFor = (batchValue: string, value: string) => {
@@ -119,16 +136,26 @@ export default function BatchAddToCart({ product, variants, optionName, selected
                   {batchValue}
                 </span>
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setOpenNoteFor(open => (open === batchValue ? null : batchValue))}
-                    disabled={qty === 0}
-                    className={`p-1.5 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${
-                      hasNote ? 'text-amber-bourbon' : 'text-steel hover:text-white'
-                    }`}
-                    aria-label={`Add note for ${batchValue}`}
-                  >
-                    <StickyNote className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="relative">
+                    <button
+                      onClick={() => {
+                        setOpenNoteFor(open => (open === batchValue ? null : batchValue))
+                        setActiveNudge(v => (v === batchValue ? null : v))
+                      }}
+                      disabled={qty === 0}
+                      className={`p-1.5 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${
+                        hasNote ? 'text-amber-bourbon' : 'text-steel hover:text-white'
+                      } ${openNoteFor !== batchValue && activeNudge === batchValue ? 'animate-nudge-pulse text-amber-bourbon' : ''}`}
+                      aria-label={`Add note for ${batchValue}`}
+                    >
+                      <StickyNote className="w-3.5 h-3.5" />
+                    </button>
+                    {openNoteFor !== batchValue && activeNudge === batchValue && (
+                      <span className="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-medium text-amber-bourbon bg-navy-900 border border-amber-bourbon/40 rounded px-2 py-1 animate-tooltip-flash z-10">
+                        Add a note
+                      </span>
+                    )}
+                  </div>
                   <div className="flex items-center border border-white/10 rounded bg-navy-800/50">
                     <button
                       onClick={() => setQty(batchValue, -1)}
