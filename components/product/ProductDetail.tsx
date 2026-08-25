@@ -210,20 +210,22 @@ export default function ProductDetail({ product }: Props) {
           </div>
         )}
 
-        {/* Customer note */}
-        <div className="space-y-2">
-          <label htmlFor="customer-note" className="block text-sm font-medium text-steel-light">
-            Order Note <span className="text-steel/40">(optional)</span>
-          </label>
-          <textarea
-            id="customer-note"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            rows={3}
-            placeholder="Color preferences, text to include, special requests…"
-            className="w-full bg-navy-700/50 border border-steel/20 rounded-lg px-4 py-3 text-sm text-white placeholder-steel/40 focus:outline-none focus:border-amber-bourbon/60 resize-none transition-colors"
-          />
-        </div>
+        {/* Customer note — batch-mode products collect a per-tag note in BatchAddToCart instead */}
+        {!isBatchMode && (
+          <div className="space-y-2">
+            <label htmlFor="customer-note" className="block text-sm font-medium text-steel-light">
+              Order Note <span className="text-steel/40">(optional)</span>
+            </label>
+            <textarea
+              id="customer-note"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              rows={3}
+              placeholder="Color preferences, text to include, special requests…"
+              className="w-full bg-navy-700/50 border border-steel/20 rounded-lg px-4 py-3 text-sm text-white placeholder-steel/40 focus:outline-none focus:border-amber-bourbon/60 resize-none transition-colors"
+            />
+          </div>
+        )}
 
         {/* Artwork upload — not shown for 3rd-party barware products */}
         {!isBarware && (
@@ -240,7 +242,6 @@ export default function ProductDetail({ product }: Props) {
             optionName={batchOptionName}
             selectedVariant={selectedVariant}
             artworkUrl={artworkUrl}
-            customerNote={note}
           />
         ) : (
           <AddToCart
