@@ -61,19 +61,29 @@ export async function POST(req: NextRequest) {
     content: m.content.slice(0, MAX_CONTENT_LENGTH),
   }))
 
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
-  const products = await getProducts(50)
-  const systemPrompt = buildSystemPrompt(products)
+  async function startChatStream() {
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+    const products = await getProducts(50)
+    const systemPrompt = buildSystemPrompt(products)
 
-  const stream = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [
-      { role: 'system', content: systemPrompt },
-      ...safeMessages,
-    ],
-    stream: true,
-    max_tokens: 300,
-  })
+    return openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        ...safeMessages,
+      ],
+      stream: true,
+      max_tokens: 300,
+    })
+  }
+
+  let stream: Awaited<ReturnType<typeof startChatStream>>
+  try {
+    stream = await startChatStream()
+  } catch (err) {
+    console.error('Chat setup failed:', err)
+    return new Response('Chat is temporarily unavailable', { status: 503 })
+  }
 
   const encoder = new TextEncoder()
   const MARKER_PREFIX = '[CONTACT_INFO:'
