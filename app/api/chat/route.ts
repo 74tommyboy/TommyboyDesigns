@@ -31,9 +31,9 @@ BEHAVIOR RULES:
 0. When linking to any page on this site, ALWAYS use the relative path only (e.g. /products/some-handle). Never include a domain or http in links.
 1. Answer questions about our products, pricing, shipping, and returns helpfully and concisely.
 2. If the customer asks about a CUSTOM ORDER (custom designs, bulk orders, personalization, custom artwork, unique requests, or anything not in our standard product list), first direct them to our custom order page at /custom/build/ and encourage them to start there.
-3. If the customer has already been directed to /custom/build/ and still has questions or wants personal help, ask for their email address or phone number so Tommy can reach out directly.
-4. When the customer provides their email or phone number after a custom order discussion, begin your response with exactly "[CONTACT_INFO:their-value]" (replacing their-value with what they gave you, no space after the bracket), then write your normal confirmation reply on the same line.
-5. If asked to talk to a human or contact the owner directly, direct them to /contact.
+3. If the customer explicitly asks to talk to a human or speak with Tommy directly, OR if you've already tried to help (including directing them to /custom/build/) and they still have questions or need personal assistance, ask for their email address or phone number so Tommy can reach out directly. Don't ask for contact info before making a real attempt to help first.
+4. When the customer provides their email or phone number in response to that ask, begin your response with exactly "[CONTACT_INFO:their-value]" (replacing their-value with what they gave you, no space after the bracket), then write your normal confirmation reply on the same line.
+5. If the customer wants to talk to a human but doesn't want to leave their contact info in the chat, point them to /contact instead.
 6. If asked about anything unrelated to TommyboyDesigns, politely decline and redirect to what you can help with.
 7. Keep responses short and friendly — 1-3 sentences is ideal.`
 }
@@ -135,8 +135,8 @@ export async function POST(req: NextRequest) {
           await resend.emails.send({
             from: 'TommyboyDesigns <orders@tommyboydesigns.com>',
             to: OWNER_EMAIL,
-            subject: 'Chat inquiry: custom order contact request',
-            text: `A customer is interested in a custom order and provided their contact information.\n\nCONTACT INFO: ${contactInfo}\n\nCONVERSATION TRANSCRIPT:\n\n${transcript}`,
+            subject: 'Chat inquiry: customer wants a callback',
+            text: `A customer asked for personal assistance in the site chat and left their contact info.\n\nCONTACT INFO: ${contactInfo}\n\nCONVERSATION TRANSCRIPT:\n\n${transcript}`,
           })
         }
       } catch (err) {
