@@ -3,8 +3,9 @@ import { Package, Truck, Clock, Scale, Shield } from 'lucide-react'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Shipping Policy | TommyboyDesigns',
+  title: 'Shipping Policy',
   description: 'Shipping information for TommyboyDesigns orders — processing times, carriers, and delivery estimates.',
+  alternates: { canonical: 'https://www.tommyboydesigns.com/policies/shipping' },
 }
 
 const SHIPPING_METHODS = [

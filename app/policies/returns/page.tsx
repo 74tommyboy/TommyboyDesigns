@@ -2,8 +2,9 @@ import Link from 'next/link'
 import { Shield, RefreshCw, Package, Mail, Users } from 'lucide-react'
 
 export const metadata = {
-  title: 'Return, Replacement & Refund Policy | TommyboyDesigns',
+  title: 'Return, Replacement & Refund Policy',
   description: 'Our hassle-free replacement and refund policy. No returns needed — we make it right.',
+  alternates: { canonical: 'https://www.tommyboydesigns.com/policies/returns' },
 }
 
 export default function ReturnPolicyPage() {

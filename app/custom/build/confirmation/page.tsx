@@ -1,8 +1,14 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { CheckCircle } from 'lucide-react'
 import { SHAPES } from '@/lib/custom-inquiry-types'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Request Received',
+  robots: { index: false, follow: false },
+}
 
 interface Props {
   searchParams: Promise<{ shape?: string; qty?: string; distillery?: string }>

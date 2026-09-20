@@ -25,12 +25,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }))
 
+  // Use real dates: the catalog's most recent change for catalog-driven pages, and none for pages
+  // with no known change date (an always-"now" lastmod teaches Google to ignore the field).
+  const latestProductUpdate = products.reduce<Date | undefined>((latest, p) => {
+    const d = new Date(p.updatedAt)
+    return !latest || d > latest ? d : latest
+  }, undefined)
+
   const staticPages: MetadataRoute.Sitemap = [
-    { url: BASE_URL, lastModified: new Date(), changeFrequency: 'daily', priority: 1.0 },
-    { url: `${BASE_URL}/shop`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
+    { url: BASE_URL, lastModified: latestProductUpdate, changeFrequency: 'daily', priority: 1.0 },
+    { url: `${BASE_URL}/shop`, lastModified: latestProductUpdate, changeFrequency: 'daily', priority: 0.9 },
     { url: `${BASE_URL}/about`, lastModified: new Date('2026-03-26'), changeFrequency: 'monthly', priority: 0.6 },
     { url: `${BASE_URL}/custom`, lastModified: new Date('2026-03-26'), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${BASE_URL}/reviews`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
+    { url: `${BASE_URL}/custom/build`, changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${BASE_URL}/coasters/build`, changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${BASE_URL}/reviews`, changeFrequency: 'weekly', priority: 0.7 },
     { url: `${BASE_URL}/contact`, lastModified: new Date('2025-01-01'), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${BASE_URL}/policies/shipping`, lastModified: new Date('2025-01-01'), changeFrequency: 'monthly', priority: 0.5 },
     { url: `${BASE_URL}/policies/returns`, lastModified: new Date('2025-01-01'), changeFrequency: 'monthly', priority: 0.5 },

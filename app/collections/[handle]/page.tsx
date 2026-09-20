@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ChevronRight } from 'lucide-react'
-import { getCollection, getCollections, formatMoney, productPath } from '@/lib/shopify'
+import { getCollection, getCollections, formatMoney, productPath, metaDescription } from '@/lib/shopify'
 
 interface Props {
   params: { handle: string }
@@ -12,12 +12,15 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const collection = await getCollection(params.handle)
   if (!collection) return { title: 'Collection Not Found' }
+  const url = `https://www.tommyboydesigns.com/collections/${collection.handle}`
+  const pageTitle = collection.seo.title?.trim() || collection.title
+  const seoDescription = collection.seo.description?.trim() ?? ''
+  const description = metaDescription(seoDescription.length >= 50 ? seoDescription : collection.description || collection.title)
   return {
-    title: collection.title,
-    description: collection.description,
-    alternates: {
-      canonical: `https://www.tommyboydesigns.com/collections/${params.handle}`,
-    },
+    title: pageTitle.length > 45 ? { absolute: pageTitle } : pageTitle,
+    description,
+    alternates: { canonical: url },
+    openGraph: { title: pageTitle, description, url },
   }
 }
 

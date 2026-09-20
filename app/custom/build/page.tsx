@@ -1,6 +1,13 @@
+import type { Metadata } from 'next'
 import { getCollection } from '@/lib/shopify'
 import { getAvailableFilamentColors, AvailableColor } from '@/lib/queries/filament'
 import BuildWizard from './BuildWizard'
+
+export const metadata: Metadata = {
+  title: 'Build a Custom Neck Tag',
+  description: 'Design a custom 3D-printed bourbon bottle neck tag: choose your shape, colors, distillery details, and attachment style. Veteran owned & operated.',
+  alternates: { canonical: 'https://www.tommyboydesigns.com/custom/build' },
+}
 
 export const revalidate = 60
 

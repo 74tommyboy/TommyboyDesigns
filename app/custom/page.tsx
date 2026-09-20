@@ -3,8 +3,9 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Custom Build | TommyboyDesigns',
-  description: 'Design a fully custom 3D-printed neck tag or coaster. Veteran owned & operated.',
+  title: 'Custom 3D-Printed Neck Tags & Coasters',
+  description: 'Design fully custom 3D-printed bourbon bottle neck tags and coasters. Choose your shape, colors, and artwork. Veteran owned & operated.',
+  alternates: { canonical: 'https://www.tommyboydesigns.com/custom' },
 }
 
 export default function CustomPage() {

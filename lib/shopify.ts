@@ -23,11 +23,18 @@ async function shopifyFetch<T>(query: string, variables?: Record<string, unknown
 }
 
 // ─── Types ───────────────────────────────────────────────
+// The "Search engine listing" fields from Shopify admin; null when left blank.
+export interface ShopifySeo {
+  title: string | null
+  description: string | null
+}
+
 export interface ShopifyProduct {
   id: string
   handle: string
   title: string
   vendor: string
+  seo: ShopifySeo
   description: string
   descriptionHtml: string
   tags: string[]
@@ -60,6 +67,7 @@ export interface ShopifyCollection {
   id: string
   handle: string
   title: string
+  seo: ShopifySeo
   description: string
   updatedAt: string
   image: { url: string; altText: string | null } | null
@@ -95,6 +103,7 @@ const PRODUCT_FRAGMENT = `
   handle
   title
   vendor
+  seo { title description }
   description
   descriptionHtml
   tags
@@ -164,7 +173,7 @@ export async function getCollections(): Promise<ShopifyCollection[]> {
       collections(first: 20) {
         edges {
           node {
-            id handle title description updatedAt
+            id handle title seo { title description } description updatedAt
             image { url altText }
             products(first: 4) {
               edges { node { ${PRODUCT_FRAGMENT} } }
@@ -181,7 +190,7 @@ export async function getCollection(handle: string): Promise<ShopifyCollection |
   const data = await shopifyFetch<{ collection: ShopifyCollection | null }>(`
     query GetCollection($handle: String!) {
       collection(handle: $handle) {
-        id handle title description updatedAt
+        id handle title seo { title description } description updatedAt
         image { url altText }
         products(first: 50) {
           edges { node { ${PRODUCT_FRAGMENT} } }
@@ -353,6 +362,14 @@ export async function updateCartLine(cartId: string, lineId: string, quantity: n
 }
 
 // ─── Helpers ──────────────────────────────────────────────
+// Collapse whitespace and trim to a meta-description length, cutting on a word boundary.
+export function metaDescription(text: string, max = 155): string {
+  const clean = text.replace(/\s+/g, ' ').trim()
+  if (clean.length <= max) return clean
+  const cut = clean.slice(0, max - 1)
+  return `${cut.slice(0, cut.lastIndexOf(' ') > 80 ? cut.lastIndexOf(' ') : cut.length).replace(/[\s,;:.&\-–—]+$/, '')}…`
+}
+
 // Some handles contain non-ASCII characters (e.g. "™"); always percent-encode them in URLs.
 export function productPath(handle: string): string {
   return `/products/${encodeURIComponent(handle)}`

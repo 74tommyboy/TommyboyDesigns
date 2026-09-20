@@ -2,8 +2,9 @@ import { Metadata } from 'next'
 import { Mail, Phone, MapPin, Clock, Shield } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Contact Us | TommyboyDesigns',
+  title: 'Contact Us',
   description: 'Get in touch with TommyboyDesigns. Questions about your order, custom requests, or anything else — we\'re here to help.',
+  alternates: { canonical: 'https://www.tommyboydesigns.com/contact' },
 }
 
 const CONTACT = [

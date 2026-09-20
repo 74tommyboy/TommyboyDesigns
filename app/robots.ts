@@ -6,7 +6,8 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: ['/', '/api/merchant-feed'],
-        disallow: ['/cart', '/checkout', '/api/'],
+        // '/reviews/' (trailing slash) blocks the per-order review links but not the public /reviews page
+        disallow: ['/cart', '/checkout', '/api/', '/admin', '/reviews/', '/custom/build/confirmation'],
       },
     ],
     sitemap: 'https://www.tommyboydesigns.com/sitemap.xml',

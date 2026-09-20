@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ChevronRight } from 'lucide-react'
-import { getProduct, getProducts, formatMoney, productPath } from '@/lib/shopify'
+import { getProduct, getProducts, formatMoney, productPath, metaDescription } from '@/lib/shopify'
 import { getProductRating, getProductReviews } from '@/lib/supabase'
 import ProductDetail from '@/components/product/ProductDetail'
 import ProductReviews from '@/components/product/ProductReviews'
@@ -25,13 +25,31 @@ function decodeHandle(handle: string): string {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product = await getProduct(decodeHandle(params.handle))
   if (!product) return { title: 'Product Not Found' }
+
+  const url = `https://www.tommyboydesigns.com${productPath(product.handle)}`
+  const pageTitle = product.seo.title?.trim() || product.title
+  // Long titles would be truncated in results with the " | TommyboyDesigns" suffix appended, so drop it.
+  const title = pageTitle.length > 45 ? { absolute: pageTitle } : pageTitle
+
+  // Prefer the description set in Shopify. Otherwise lead with the product title (many products share
+  // near-identical descriptions) and trim to a snippet-friendly length.
+  const plain = product.description.replace(/\s+/g, ' ').trim()
+  // (An SEO description under 50 characters is treated as unset, e.g. a stray "#bourbon" hashtag.)
+  const seoDescription = product.seo.description?.trim() ?? ''
+  const description = seoDescription.length >= 50
+    ? metaDescription(seoDescription)
+    : metaDescription(
+        !plain ? product.title : plain.toLowerCase().startsWith(product.title.toLowerCase()) ? plain : `${product.title}. ${plain}`
+      )
+
   return {
-    title: product.title,
-    description: product.description,
-    alternates: {
-      canonical: `https://www.tommyboydesigns.com${productPath(product.handle)}`,
-    },
+    title,
+    description,
+    alternates: { canonical: url },
     openGraph: {
+      title: pageTitle,
+      description,
+      url,
       images: [product.images.edges[0]?.node.url].filter(Boolean) as string[],
     },
   }

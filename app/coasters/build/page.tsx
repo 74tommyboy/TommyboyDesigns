@@ -4,8 +4,9 @@ import { getAvailableFilamentColors, AvailableColor } from '@/lib/queries/filame
 import CoasterWizard from './CoasterWizard'
 
 export const metadata: Metadata = {
-  title: 'Custom Coasters | TommyboyDesigns',
+  title: 'Custom Coasters',
   description: 'Design fully custom 3D-printed coasters — choose your shape, colors, and artwork. Veteran owned & operated.',
+  alternates: { canonical: 'https://www.tommyboydesigns.com/coasters/build' },
 }
 
 export const revalidate = 60

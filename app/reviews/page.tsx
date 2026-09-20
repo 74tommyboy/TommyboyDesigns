@@ -5,8 +5,9 @@ import { supabase, Review } from '@/lib/supabase'
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'Customer Reviews | TommyboyDesigns',
+  title: 'Customer Reviews',
   description: 'See what collectors are saying about TommyboyDesigns precision-crafted bourbon neck tags. Leave your own review.',
+  alternates: { canonical: 'https://www.tommyboydesigns.com/reviews' },
 }
 
 async function getReviews(): Promise<Review[]> {
@@ -21,5 +22,11 @@ async function getReviews(): Promise<Review[]> {
 
 export default async function ReviewsPage() {
   const reviews = await getReviews()
-  return <ReviewsSection reviews={reviews} />
+  return (
+    <>
+      {/* ReviewsSection is also used on the homepage and only has an h2, so the page's h1 lives here */}
+      <h1 className="sr-only">Customer Reviews</h1>
+      <ReviewsSection reviews={reviews} />
+    </>
+  )
 }
