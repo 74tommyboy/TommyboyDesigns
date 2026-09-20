@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ChevronRight } from 'lucide-react'
-import { getCollection, formatMoney } from '@/lib/shopify'
+import { getCollection, getCollections, formatMoney, productPath } from '@/lib/shopify'
 
 interface Props {
   params: { handle: string }
@@ -22,6 +22,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export const revalidate = 60
+
+export async function generateStaticParams() {
+  const collections = await getCollections()
+  return collections.map((c) => ({ handle: c.handle }))
+}
 
 export default async function CollectionPage({ params }: Props) {
   const collection = await getCollection(params.handle)
@@ -79,11 +84,10 @@ export default async function CollectionPage({ params }: Props) {
               const compareAt = product.compareAtPriceRange?.minVariantPrice
               const hasDiscount = compareAt && parseFloat(compareAt.amount) > parseFloat(price.amount)
 
-              const numericId = product.id.split('/').pop()
               return (
                 <Link
                   key={product.id}
-                  href={`/products/${product.handle}?id=${numericId}`}
+                  href={productPath(product.handle)}
                   className="group glass-card overflow-hidden hover:border-amber-bourbon/30 transition-all duration-300 hover:shadow-amber-glow"
                 >
                   <div className="relative aspect-square overflow-hidden bg-navy-700">

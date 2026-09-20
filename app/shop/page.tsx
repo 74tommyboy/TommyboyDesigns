@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ChevronRight } from 'lucide-react'
-import { getProducts, formatMoney } from '@/lib/shopify'
+import { getProducts, formatMoney, productPath } from '@/lib/shopify'
 
 export const metadata: Metadata = {
   title: 'Shop Bourbon Neck Tags | BTAC, Pappy Van Winkle & Custom Designs',
@@ -50,11 +50,10 @@ export default async function ShopPage() {
             const compareAt = product.compareAtPriceRange?.minVariantPrice
             const hasDiscount = compareAt && parseFloat(compareAt.amount) > parseFloat(price.amount)
 
-            const numericId = product.id.split('/').pop()
             return (
               <Link
                 key={product.id}
-                href={`/products/${product.handle}?id=${numericId}`}
+                href={productPath(product.handle)}
                 className="group glass-card overflow-hidden hover:border-amber-bourbon/30 transition-all duration-300 hover:shadow-amber-glow"
               >
                 <div className="relative aspect-square overflow-hidden bg-navy-700">

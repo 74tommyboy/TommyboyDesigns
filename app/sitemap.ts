@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next'
-import { getProducts, getCollections } from '@/lib/shopify'
+import { getProducts, getCollections, productPath } from '@/lib/shopify'
 
 const BASE_URL = 'https://www.tommyboydesigns.com'
 
@@ -10,7 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ])
 
   const productEntries: MetadataRoute.Sitemap = products.map((product) => ({
-    url: `${BASE_URL}/products/${product.handle}`,
+    url: `${BASE_URL}${productPath(product.handle)}`,
     lastModified: new Date(product.updatedAt),
     changeFrequency: 'weekly',
     priority: 0.8,

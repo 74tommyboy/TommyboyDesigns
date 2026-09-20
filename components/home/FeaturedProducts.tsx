@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
-import { ShopifyProduct, formatMoney } from '@/lib/shopify'
+import { ShopifyProduct, formatMoney, productPath } from '@/lib/shopify'
 
 interface Props {
   products: ShopifyProduct[]
@@ -29,11 +29,10 @@ export default function FeaturedProducts({ products }: Props) {
           const compareAt = product.compareAtPriceRange?.minVariantPrice
           const hasDiscount = compareAt && parseFloat(compareAt.amount) > parseFloat(price.amount)
 
-          const numericId = product.id.split('/').pop()
           return (
             <Link
               key={product.id}
-              href={`/products/${product.handle}?id=${numericId}`}
+              href={productPath(product.handle)}
               className="group glass-card overflow-hidden hover:border-amber-bourbon/30 transition-all duration-300 hover:shadow-amber-glow"
             >
               {/* Image */}

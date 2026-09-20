@@ -27,6 +27,7 @@ export interface ShopifyProduct {
   id: string
   handle: string
   title: string
+  vendor: string
   description: string
   descriptionHtml: string
   tags: string[]
@@ -46,6 +47,8 @@ export interface ShopifyProduct {
 export interface ShopifyVariant {
   id: string
   title: string
+  sku: string | null
+  barcode: string | null
   availableForSale: boolean
   price: { amount: string; currencyCode: string }
   compareAtPrice: { amount: string; currencyCode: string } | null
@@ -91,6 +94,7 @@ const PRODUCT_FRAGMENT = `
   id
   handle
   title
+  vendor
   description
   descriptionHtml
   tags
@@ -108,7 +112,7 @@ const PRODUCT_FRAGMENT = `
   variants(first: 250) {
     edges {
       node {
-        id title availableForSale
+        id title sku barcode availableForSale
         price { amount currencyCode }
         compareAtPrice { amount currencyCode }
         selectedOptions { name value }
@@ -349,6 +353,11 @@ export async function updateCartLine(cartId: string, lineId: string, quantity: n
 }
 
 // ─── Helpers ──────────────────────────────────────────────
+// Some handles contain non-ASCII characters (e.g. "™"); always percent-encode them in URLs.
+export function productPath(handle: string): string {
+  return `/products/${encodeURIComponent(handle)}`
+}
+
 export function formatMoney(amount: string, currencyCode = 'USD'): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
