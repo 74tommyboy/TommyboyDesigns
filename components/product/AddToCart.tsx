@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { ShoppingCart, Loader2, Check, Minus, Plus } from 'lucide-react'
-import { ShopifyVariant, isCustomProduct, ShopifyProduct } from '@/lib/shopify'
+import { ShopifyVariant, isCustomProduct, allowsLogoUpload, ShopifyProduct } from '@/lib/shopify'
 import { useCart } from '@/components/layout/CartProvider'
 
 interface Props {
@@ -22,7 +22,7 @@ export default function AddToCart({ product, selectedVariant, artworkUrl, custom
     if (!selectedVariant || !selectedVariant.availableForSale) return
 
     const attributes: Array<{ key: string; value: string }> = []
-    if (isCustom && artworkUrl) {
+    if ((isCustom || allowsLogoUpload(product)) && artworkUrl) {
       attributes.push({ key: 'Artwork URL', value: artworkUrl })
     }
     if (customerNote.trim()) {

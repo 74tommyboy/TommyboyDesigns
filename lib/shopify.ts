@@ -356,6 +356,18 @@ export function formatMoney(amount: string, currencyCode = 'USD'): string {
   }).format(parseFloat(amount))
 }
 
+// Third-party (Collective) products where the buyer can supply a logo/image.
+// Only these exact products (matched by title, case/whitespace-insensitive), or any product tagged `custom-logo`.
+const LOGO_UPLOAD_TITLES = [
+  'CUSTOM LASER ENGRAVED METAL FLASKS – PERSONALIZED GIFT FOR ANY OCCASION',
+  'CUSTOM ENGRAVED SLATE COASTERS – PERSONALIZED GIFT | PREMIUM NATURAL STONE',
+].map((t) => t.replace(/\s+/g, ' ').trim().toLowerCase())
+
+export function allowsLogoUpload(product: ShopifyProduct): boolean {
+  const title = product.title.replace(/\s+/g, ' ').trim().toLowerCase()
+  return product.tags.includes('custom-logo') || LOGO_UPLOAD_TITLES.includes(title)
+}
+
 export function isCustomProduct(product: ShopifyProduct): boolean {
   return product.tags.includes('custom') || product.title.toLowerCase().includes('custom')
 }

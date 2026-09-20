@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { ShopifyProduct, ShopifyVariant, formatMoney, isCustomProduct } from '@/lib/shopify'
+import { ShopifyProduct, ShopifyVariant, formatMoney, isCustomProduct, allowsLogoUpload } from '@/lib/shopify'
 import AddToCart from './AddToCart'
 import BatchAddToCart from './BatchAddToCart'
 import ArtworkUpload from './ArtworkUpload'
@@ -227,8 +227,8 @@ export default function ProductDetail({ product }: Props) {
           </div>
         )}
 
-        {/* Artwork upload — not shown for 3rd-party barware products */}
-        {!isBarware && (
+        {/* Artwork upload — not shown for 3rd-party barware products, except logo-customizable ones */}
+        {(!isBarware || allowsLogoUpload(product)) && (
           <div className="tactical-divider pt-6">
             <ArtworkUpload onUpload={setArtworkUrl} />
           </div>
