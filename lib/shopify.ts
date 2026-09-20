@@ -146,6 +146,21 @@ export async function getProducts(first = 20): Promise<ShopifyProduct[]> {
   return data.products.edges.map(e => e.node)
 }
 
+// Tag a product with this in Shopify to feature it on /new and in the announcement bar.
+export const NEW_ARRIVALS_TAG = 'new'
+
+// Products carrying a Shopify tag, newest first. Powers /new and the announcement bar.
+export async function getProductsByTag(tag: string, first = 50): Promise<ShopifyProduct[]> {
+  const data = await shopifyFetch<{ products: { edges: Array<{ node: ShopifyProduct }> } }>(`
+    query GetProductsByTag($first: Int!, $query: String!) {
+      products(first: $first, query: $query, sortKey: CREATED_AT, reverse: true) {
+        edges { node { ${PRODUCT_FRAGMENT} } }
+      }
+    }
+  `, { first, query: `tag:${tag}` })
+  return data.products.edges.map(e => e.node)
+}
+
 export async function getProduct(handle: string): Promise<ShopifyProduct | null> {
   const data = await shopifyFetch<{ product: ShopifyProduct | null }>(`
     query GetProduct($handle: String!) {

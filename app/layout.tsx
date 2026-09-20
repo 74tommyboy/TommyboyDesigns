@@ -8,6 +8,7 @@ import ReviewPopup from '@/components/ui/ReviewPopup'
 import ChatWidget from '@/components/ui/ChatWidget'
 import AnnouncementPopup from '@/components/layout/AnnouncementPopup'
 import { getSiteSettings } from '@/lib/site-settings'
+import { getProductsByTag, NEW_ARRIVALS_TAG } from '@/lib/shopify'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.tommyboydesigns.com'),
@@ -77,6 +78,10 @@ const websiteSchema = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const settings = await getSiteSettings()
 
+  // Announcement bar shows only while something is tagged "new"; a Shopify hiccup must not break every page.
+  const newProducts = await getProductsByTag(NEW_ARRIVALS_TAG, 10).catch(() => [])
+  const newArrivalsKey = newProducts.map((p) => p.handle).join('|')
+
   const today = new Date().toISOString().slice(0, 10) // YYYY-MM-DD
   const inVacationWindow =
     !!settings.vacation_from &&
@@ -99,7 +104,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           vacationMode={isVacationMode}
           vacationMessage={settings.vacation_message}
         >
-          <Header />
+          <Header newArrivalsKey={newArrivalsKey} />
           <main className="min-h-dvh">{children}</main>
           <Footer />
           <ReviewPopup />
