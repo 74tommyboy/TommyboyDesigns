@@ -134,9 +134,22 @@ export default async function ProductPage({ params }: Props) {
       itemCondition: 'https://schema.org/NewCondition',
       availability: isAvailable ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       seller: { '@type': 'Organization', name: 'TommyboyDesigns' },
-      // Shipping rates are calculated at checkout, so no shippingDetails is declared here (Merchant
-      // Center shipping settings apply). Returns match /policies/returns: none accepted on our own
-      // products. Partner (barware) products follow their supplier's terms, so we make no claim.
+      // Rates are calculated at checkout, so shippingRate is omitted rather than guessed. Times match
+      // /policies/shipping (3-5 business days handling; 1-7 transit across USPS/UPS options). Partner
+      // (barware) products ship from the supplier, so only the destination is declared for them.
+      shippingDetails: {
+        '@type': 'OfferShippingDetails',
+        shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'US' },
+        ...(!isBarware && {
+          deliveryTime: {
+            '@type': 'ShippingDeliveryTime',
+            handlingTime: { '@type': 'QuantitativeValue', minValue: 3, maxValue: 5, unitCode: 'DAY' },
+            transitTime: { '@type': 'QuantitativeValue', minValue: 1, maxValue: 7, unitCode: 'DAY' },
+          },
+        }),
+      },
+      // Returns match /policies/returns: none accepted on our own products. Partner (barware)
+      // products follow their supplier's terms, so we make no claim.
       ...(!isBarware && {
         hasMerchantReturnPolicy: {
           '@type': 'MerchantReturnPolicy',
