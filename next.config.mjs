@@ -7,6 +7,21 @@ const nextConfig = {
         destination: '/products/btac-eht-bourbon-bottle-neck-tags',
         permanent: true,
       },
+      {
+        source: '/products/custom-miscellaneous-bottle-neck-tags-77013',
+        destination: '/products/custom-miscellaneous-bottle-neck-tags-copy',
+        permanent: true,
+      },
+      {
+        source: '/products/6-sample-bottle-box-box-only',
+        destination: '/collections/barware-accessories-1',
+        permanent: true,
+      },
+      {
+        source: '/products/2-oz-whiskey-sample-bottle-decorative-storage-box',
+        destination: '/collections/barware-accessories-1',
+        permanent: true,
+      },
     ]
   },
   images: {
