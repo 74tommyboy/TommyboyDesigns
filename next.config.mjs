@@ -9,7 +9,13 @@ const nextConfig = {
       },
       {
         source: '/products/custom-miscellaneous-bottle-neck-tags-77013',
-        destination: '/products/custom-miscellaneous-bottle-neck-tags-copy',
+        destination: '/custom/build',
+        permanent: true,
+      },
+      {
+        // Pre-builder custom order product; orders placed through it never create an inquiry or email.
+        source: '/products/custom-miscellaneous-bottle-neck-tags-copy',
+        destination: '/custom/build',
         permanent: true,
       },
       {
