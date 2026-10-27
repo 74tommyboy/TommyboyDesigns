@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TommyboyDesigns — Shopify Thank You Card (3×5 Vertical, 8×10 Print)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #c8c4bc;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,.04) 28px, rgba(0,0,0,.04) 29px),
+        repeating-linear-gradient(90deg, transparent, transparent 28px, rgba(0,0,0,.04) 28px, rgba(0,0,0,.04) 29px);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      padding: 40px 20px;
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+
+    /* ─── Print UI ─── */
+    .print-ui {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .print-btn {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      letter-spacing: 0.25em;
+      font-size: 14px;
+      color: #ffffff;
+      background: #0a1628;
+      border: none;
+      padding: 10px 28px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .print-btn:hover { background: #D97706; }
+    .print-note {
+      font-size: 11px;
+      color: #6b6458;
+      letter-spacing: 0.08em;
+      font-style: italic;
+      text-align: center;
+      max-width: 460px;
+      line-height: 1.5;
+    }
+    .count-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .count-label {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      color: #3a3028;
+    }
+    .count-input {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 16px;
+      color: #0a1628;
+      background: white;
+      border: 1px solid rgba(10,22,40,0.25);
+      width: 56px;
+      padding: 4px 8px;
+      text-align: center;
+    }
+    .count-input:focus { outline: 1px solid #D97706; }
+    .count-hint {
+      font-size: 10px;
+      color: #8a7a6a;
+      font-style: italic;
+    }
+
+    /* ══════════════════════════════════════
+       THE CARD — 3 × 5 inches (vertical)
+    ══════════════════════════════════════ */
+    .card {
+      width: 3in;
+      height: 5in;
+      background: #ffffff;
+      position: relative;
+      overflow: hidden;
+      padding: 0.24in 0.22in 0;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.12);
+    }
+
+    /* Big background watermark */
+    .watermark {
+      position: absolute;
+      right: -0.2in;
+      top: 0.9in;
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 230px;
+      color: rgba(217, 119, 6, 0.08);
+      line-height: 0.85;
+      letter-spacing: -0.05em;
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
+    }
+
+    /* TOP: brand, then eyebrow */
+    .top-block {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.14in;
+    }
+    .top-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.1in;
+    }
+    .brand-tag {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .brand-tag svg {
+      height: 0.5in;
+      width: auto;
+      color: #0a1628;
+      display: block;
+    }
+    .brand-name {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      color: #0a1628;
+      white-space: nowrap;
+    }
+    .eyebrow {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.42em;
+      color: #D97706;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .eyebrow-rule {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, #D97706, transparent);
+    }
+
+    /* HEADLINE */
+    .headline-wrap {
+      position: relative;
+      z-index: 1;
+      margin-top: 0.3in;
+    }
+    .headline-main {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 72px;
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      color: #0a1628;
+    }
+    .headline-main .dot {
+      color: #D97706;
+    }
+    .headline-sub {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-style: italic;
+      font-size: 26px;
+      color: #D97706;
+      margin-top: 4px;
+    }
+
+    /* BODY */
+    .body-block {
+      position: relative;
+      z-index: 1;
+      margin-top: 0.26in;
+      display: flex;
+      flex-direction: column;
+      gap: 0.16in;
+    }
+    .body-text {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-style: italic;
+      font-size: 12.5px;
+      color: #1e3050;
+      line-height: 1.45;
+      text-wrap: pretty;
+    }
+    .body-text b {
+      font-style: normal;
+      color: #D97706;
+    }
+    .qr-frame {
+      flex-shrink: 0;
+      border: 0.5px solid rgba(10, 22, 40, 0.18);
+      padding: 4px;
+      background: #fff;
+    }
+    .qr-frame img {
+      display: block;
+      width: 0.85in;
+      height: 0.85in;
+    }
+
+    /* OFFER BAND at bottom */
+    .offer-band {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      background: #0a1628;
+      padding: 0.14in 0.22in 0.16in;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.09in;
+      z-index: 2;
+    }
+    .offer-eyebrow {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 8px;
+      letter-spacing: 0.3em;
+      color: rgba(255,255,255,0.55);
+    }
+    .offer-amount {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 18px;
+      letter-spacing: 0.1em;
+      color: #fff;
+      white-space: nowrap;
+      margin-top: 1px;
+    }
+    .offer-amount .off {
+      color: #D97706;
+    }
+    .offer-code {
+      align-self: stretch;
+      text-align: center;
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.1em;
+      color: #D97706;
+      padding: 4px 12px;
+      border: 1.5px dashed #D97706;
+      background: rgba(217, 119, 6, 0.08);
+      white-space: nowrap;
+    }
+    .offer-fine {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-style: italic;
+      font-size: 7px;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.04em;
+      line-height: 1.4;
+    }
+
+    /* Cards grid — 2 across */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 3in);
+      gap: 0.3in;
+    }
+
+    /* ══════════════════════════════════════
+       PRINT — 8 × 10 in sheet, 2 cards side by side
+    ══════════════════════════════════════ */
+    @media print {
+      @page {
+        size: 8in 10in;
+        margin: 0.5in;
+      }
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      body {
+        background: white;
+        display: block;
+        min-height: 0;
+        padding: 0;
+        margin: 0;
+      }
+      .print-ui { display: none !important; }
+      .cards-grid {
+        /* 6.3in of cards centered in the 7in printable width */
+        width: 6.3in;
+        margin: 0 auto;
+        row-gap: 0.3in;
+      }
+      /* Two cards per sheet: force a new sheet after every second card */
+      .card:nth-child(2n+1) { break-before: page; page-break-before: always; }
+      .card:nth-child(1) { break-before: auto; page-break-before: auto; }
+      .card {
+        box-shadow: none;
+        outline: 0.5px solid #d4d0c8;
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="print-ui">
+    <div class="count-row">
+      <label class="count-label" for="count">TOTAL CARDS:</label>
+      <input class="count-input" id="count" type="number" min="1" max="20" value="2" />
+      <span class="count-hint" id="hint">2 cards — fits on one 8×10 sheet</span>
+    </div>
+    <button class="print-btn" onclick="window.print()">PRINT</button>
+    <p class="print-note">
+      Print on 8 × 10 in stock, portrait, margins set to "Default" (0.5 in), scale 100%. Enable <strong>Background graphics</strong> in your browser's print dialog. Each card is 3 × 5 in — 2 per sheet side by side (6.3 in wide with a 0.3 in cutting gap).
+    </p>
+  </div>
+
+  <div class="cards-grid" id="cards-grid"></div>
+
+  <template id="card-tpl">
+    <div class="card">
+      <!-- Background watermark -->
+      <div class="watermark">TBD</div>
+
+      <!-- Top: brand left, QR upper right, eyebrow below -->
+      <div class="top-block">
+        <div class="top-row">
+        <div class="brand-tag">
+          <svg viewBox="0 0 36 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <line x1="18" y1="0" x2="18" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="18" cy="14" r="3" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="2" y="16" width="32" height="46" rx="7" stroke="currentColor" stroke-width="1.5"/>
+            <text x="18" y="47" text-anchor="middle" fill="currentColor" font-size="13"
+                  font-family="'Bebas Neue', Impact, sans-serif" letter-spacing="2">TBD</text>
+            <line x1="8" y1="36" x2="28" y2="36" stroke="currentColor" stroke-width="0.75" stroke-opacity="0.4"/>
+            <line x1="8" y1="52" x2="28" y2="52" stroke="currentColor" stroke-width="0.75" stroke-opacity="0.4"/>
+          </svg>
+          <div class="brand-name">TOMMYBOY DESIGNS</div>
+        </div>
+          <div class="qr-frame">
+          <img
+            src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https%3A%2F%2Fwww.tommyboydesigns.com&color=0a1628&bgcolor=ffffff&qzone=1&margin=0"
+            alt="QR code — TommyboyDesigns.com"
+            width="200"
+            height="200"
+          />
+        </div>
+        </div>
+        <div class="eyebrow">
+          <span>A NOTE OF THANKS</span>
+          <span class="eyebrow-rule"></span>
+        </div>
+      </div>
+
+      <!-- Headline -->
+      <div class="headline-wrap">
+        <div class="headline-main">CHEERS<span class="dot">.</span></div>
+        <div class="headline-sub">and thank you.</div>
+      </div>
+
+      <!-- Body -->
+      <div class="body-block">
+        <p class="body-text">
+          We're glad you found us. Come back when you're thirsty for more — <b>10% off</b> the next round is on us.
+        </p>
+      </div>
+
+      <!-- Offer band -->
+      <div class="offer-band">
+        <div>
+          <div class="offer-eyebrow">USE CODE AT CHECKOUT</div>
+          <div class="offer-amount">10% <span class="off">OFF</span> YOUR NEXT ORDER</div>
+        </div>
+        <div class="offer-code">GZ9HWVY3X382</div>
+        <div class="offer-fine">One-time use · Cannot be combined with other offers · ★ Veteran Owned</div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const grid  = document.getElementById('cards-grid');
+    const tpl   = document.getElementById('card-tpl');
+    const input = document.getElementById('count');
+    const hint  = document.getElementById('hint');
+
+    function renderCards(n) {
+      grid.innerHTML = '';
+      for (let i = 0; i < n; i++) {
+        grid.appendChild(tpl.content.cloneNode(true));
+      }
+      const sheets = Math.ceil(n / 2);
+      hint.textContent = `${n} card${n === 1 ? '' : 's'} — ${sheets === 1 ? 'fits on one 8×10 sheet' : `spans ${sheets} sheets`} (2 per sheet)`;
+    }
+
+    input.addEventListener('input', () => renderCards(Math.max(1, parseInt(input.value) || 1)));
+    renderCards(2);
+  </script>
+
+</body>
+</html>
